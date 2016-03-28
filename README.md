@@ -1,2 +1,2 @@
 # Algorithms
-General purpose algorithms and data structure for practice.
+General purpose algorithms and data structures for practice.
