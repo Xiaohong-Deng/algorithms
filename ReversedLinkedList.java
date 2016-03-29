@@ -1,7 +1,7 @@
-public class ReverseLinkedList {
+public class ReversedLinkedList {
 	private Node reFirst;
 
-	private class Node {
+	public static class Node {
 		private int val;
 		private Node next;
 
@@ -9,9 +9,14 @@ public class ReverseLinkedList {
 			this.val = val;
 			this.next = next;
 		}
-	}
 
-	public ReverseLinkedList(Node first) {
+		public int getVal() {
+			return this.val;
+		}
+	}		
+
+	public ReversedLinkedList(Node first) {
+		if (first == null) return first;
 		Node currentNode = first;
 		Node next = currentNode.next;
 		Node newNext = null;
@@ -30,6 +35,9 @@ public class ReverseLinkedList {
 	}
 
   public static void main(String[] args) {
-    Node first = new Node(12, null);
+    Node first = new Node(12, new Node(24, new Node(36, null)));
+    ReversedLinkedList testcase = new ReversedLinkedList(first);
+    Node revFirst = testcase.getRevFirst();
+    System.out.println("reversed first value: " + revFirst.getVal());
   }
 }
