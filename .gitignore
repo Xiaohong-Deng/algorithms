@@ -1,3 +1,6 @@
 .classpath
 .project
 *.class
+readfile
+readfile.c
+intseq
