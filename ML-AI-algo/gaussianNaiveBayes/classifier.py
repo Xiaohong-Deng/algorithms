@@ -68,9 +68,8 @@ class GNB(object):
 
     for label, data in label_to_data.items():
       data = np.array(data)
-      data = np.transpose(data)
-      means = np.mean(data, axis=1)
-      stds = np.std(data, axis=1)
+      means = np.mean(data, axis=0)
+      stds = np.std(data, axis=0)
 
       self._label_to_feature_means[label] = means
       self._label_to_feature_stds[label] = stds
