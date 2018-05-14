@@ -1,12 +1,13 @@
 import collections
 import numpy as np
-from math import sqrt, pi, exp
+from math import pi
 
 
 def log_gaussian_prob(obs, mu, sig):
   num = (obs - mu) ** 2
   denum = 2 * sig ** 2
-  norm = 1 / sqrt(2 * pi * sig ** 2)
+  # norm = 1 / sqrt(2 * pi * sig ** 2)
+  # prob = norm * exp(-num/denum)
   log_prob = (-num / denum) + 0.5 * (np.log(2) + np.log(pi) + 2 * np.log(sig))
   return log_prob
 
