@@ -1,4 +1,4 @@
-# Gaussian Bayes Classifier
+# Gaussian Naive Bayes Classifier
 This is a quiz from Udacity Self-Driving Car Nano Degree, Path Planning module. I made some tweaks to the original design.
 1. I applied natural log to the MAP estimation, effectively converting product to summation, reducing the complexity of the computation.
 2. I skipped computing the total probability of the given observation. That is Prob(s=observation[0], d=observation[1], s_dot=observation[2], d_dot=observation[3]). The reason is that it's the same for all 4 labels in the MAP estimation. We just need to compare them to pick the one that maximizes the estimation. Why not skip it to save some computing power and speed things up?
