@@ -14,30 +14,30 @@ public class BranchBound {
   private int itemSize;
   private int packSize;
   private int N;
-  
+
   private class Item implements Comparable<Item> {
     private double vwRatio;
     private int index;
-    
+
     public Item(int weight, int value, int index) {
       vwRatio = ((double) value) / weight;
       this.index = index;
     }
-    
+
     public int compareTo(Item that) {
       if (this.vwRatio > that.vwRatio) return 1;
       if (this.vwRatio < that.vwRatio) return -1;
       return 0;
     }
   }
-  
+
   private class Node {
     private int valInPack;
     private int spaceRemained;
     private double valOpt;
     private int level;
     private int[] taken;
-    
+
     public Node(int val, int space, double valOpt, int level, int[] taken) {
       this.valInPack = val;
       this.spaceRemained = space;
@@ -46,7 +46,7 @@ public class BranchBound {
       this.taken = taken;
     }
   }
-  
+
   public BranchBound(int itemSize, int packSize) {
     this.itemSize = itemSize;
     this.packSize = packSize;
@@ -55,12 +55,12 @@ public class BranchBound {
     values = new int[itemSize];
     countLevelMembers = new int[itemSize + 1];
   }
-  
+
   public int solver() {
     int valOptRoot = (int) Math.floor(relaxRoot());
     Stack<Node> nodes = new Stack<Node>();
     int[] taken = new int[0];
-    nodes.push(new Node(0, packSize, valOptRoot, 0, taken));//index = 0, meaning no items considered yet 
+    nodes.push(new Node(0, packSize, valOptRoot, 0, taken));//index = 0, meaning no items considered yet
     int valBest = greedy(taken, 0);
     Node currentNode = null;
     while (!nodes.isEmpty()) {
@@ -72,12 +72,18 @@ public class BranchBound {
       Node left = null;
       Node right = null;
       if (currentNode.spaceRemained >= weightsOrderByDense[idx]) {
+        // in depth first search, when a left node is created, it must be the node
+        // popped and processed in the next iteration, this doesn't apply to a right node
         int[] takenLeft = new int[currentNode.taken.length + 1];
         for (int i = 0; i < takenLeft.length; i++) {
           if (i != takenLeft.length - 1) takenLeft[i] = currentNode.taken[i];
           else takenLeft[i] = idx;
         }
+        // note if the current item is taken, valOpt for the left node is currentNode.valOpt
+        // it has something to do with ordering
         left = new Node(valuesOrderByDense[idx] + currentNode.valInPack, (currentNode.spaceRemained - weightsOrderByDense[idx]), currentNode.valOpt, nextLevel, takenLeft);
+        // valInPack <= valOpt, there is a chance that valInPack == valOpt so we can prune the left here without creating the node
+        // valBest may be updated while creating the right node so I choose to prune the left in the next iteration in line 71
         if (left.valInPack >= valBest) {
           valBest = left.valInPack;
 //          StdOut.println("best update: " + valBest);
@@ -86,7 +92,7 @@ public class BranchBound {
       int[] takenRight = currentNode.taken;
       int nextValOpt = (int) relaxation(takenRight, idx);
       int nextGreedy = greedy(takenRight, nextLevel); // greedy and linear relaxation both take greedy paradigm but the latter can take fractions so
-      // it's not possible for greedy to be greater than relaxation 
+      // it's not possible for greedy to be greater than relaxation
       if (nextGreedy > valBest) {
         valBest = nextGreedy; // better keep greedy taken list in a var in case its the global best
         if (nextGreedy == nextValOpt) {
@@ -94,7 +100,8 @@ public class BranchBound {
           continue;
         }
       }
-//      StdOut.println("nextValOpt: " + nextValOpt);
+      // note if the condition stands next time the right node is popped this condition will be checked again
+      // in line 71. it is necessary because by the time the right node is popped valBest may have changed
       if (nextValOpt > valBest) {
         right = new Node(currentNode.valInPack, currentNode.spaceRemained, nextValOpt, nextLevel, takenRight);
       }
@@ -103,7 +110,7 @@ public class BranchBound {
     }
     return valBest;
   }
-  
+
   private double relaxRoot() {
     Arrays.sort(items, Collections.reverseOrder());
     for (int i = 0; i < items.length; i++) {
@@ -118,7 +125,7 @@ public class BranchBound {
     }
     return relaxation(new int[0], 0);
   }
-  
+
   private double relaxation(int[] taken, int level) {
     double bound = 0;
     int weight = 0;
@@ -161,7 +168,7 @@ public class BranchBound {
     }
     return bound;
   }
-  
+
   private int greedy(int[] taken, int level) {
     int weight = 0;
     int value = 0;
@@ -188,7 +195,7 @@ public class BranchBound {
     }
     return value;
   }
-  
+
   public void insert(int value, int weight, int index) {
     items[N] = new Item(weight, value, index);
     weights[N] = weight;

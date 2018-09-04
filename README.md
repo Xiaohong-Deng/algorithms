@@ -2,8 +2,11 @@
 
 Algorithmic implementations for self-contained and distinct mini-problems. From basic algorithms and data structures like sorting or linked list to domain specific ones like Hybrid A*.
 
-## Discrete Optimization
-NP-hard or NP-complete problems that non-exponential solutions can only be found for specific cases or all cases but optimality of the solutions can not be guarenteed.
+## Domain Specific Problem Sets
+### Discrete Optimization
+`discrete-opt`
+
+NP-hard or NP-complete problems that non-exponential solutions is not possible for general cases. What we can do includes find feasible solutions for special or common cases or try approximation as opposed to accurate solutions.
 
 More than one approaches for each of the problems.
 
@@ -14,7 +17,9 @@ Currently has the following problems
 
 Documentations are available under the subdirectory.
 
-## ML-AI-algo
-Prototypes or simplified applications that serve as demonstration.
+### ML and AI Algorithms
+`ML-AI-algo`
+
+Prototypes or simplified algorithmic applications that serve as demonstration.
 
 Documentations are available under the subdirectory.
