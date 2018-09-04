@@ -1,4 +1,25 @@
 # Algorithms
-1. Mundane algorithms and data structures for practice or learning. A CS major typically learned this kind of algo in freshman or sophomore years. Also consitute the majority of the algos you can find on leetcode.
-2. ML and AI algorithms that are self-contained
-3. ML and AI applications used to showcase the usage of some algorithms. The algos themselves don't make sense unless put them in some context.
+
+Algorithmic implementations for self-contained and distinct mini-problems. From basic algorithms and data structures like sorting or linked list to domain specific ones like Hybrid A*.
+
+## Domain Specific Problem Sets
+### Discrete Optimization
+`discrete-opt`
+
+NP-hard or NP-complete problems that non-exponential solutions is not possible for general cases. What we can do includes find feasible solutions for special or common cases or try approximation as opposed to accurate solutions.
+
+More than one approaches for each of the problems.
+
+Currently has the following problems
+
+1. 0-1 knapsack
+2. graph coloring
+
+Documentations are available under the subdirectory.
+
+### ML and AI Algorithms
+`ML-AI-algo`
+
+Prototypes or simplified algorithmic applications that serve as demonstration.
+
+Documentations are available under the subdirectory.
