@@ -6,7 +6,7 @@ Algorithmic implementations for self-contained and distinct mini-problems. From 
 ### Discrete Optimization
 `discrete-opt`
 
-NP-hard or NP-complete problems that non-exponential solutions is not possible for general cases. What we can do includes find feasible solutions for special or common cases or try approximation as opposed to accurate solutions.
+NP-hard or NP-complete problems that non-exponential solutions is not possible for general cases. What we can do includes find feasible solutions for special or common cases, try approximation as opposed to optimal solutions.
 
 More than one approaches for each of the problems.
 
@@ -20,6 +20,6 @@ Documentations are available under the subdirectory.
 ### ML and AI Algorithms
 `ML-AI-algo`
 
-Prototypes or simplified algorithmic applications that serve as demonstration.
+Prototypes or simplified algorithmic applications that serve as demonstrations.
 
 Documentations are available under the subdirectory.
