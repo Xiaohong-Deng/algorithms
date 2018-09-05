@@ -19,7 +19,7 @@ We have 2 subproblems here. We also have built connections between optimal solut
 
 For first i items and capacity W, we have solution V
 
-V(i, W) = max{V(i-1, W), Vi + V(i-1, W-Wi)} and if Wi > W, V(i, W) = V(i-1, W)
+`V(i, W) = max{V(i-1, W), Vi + V(i-1, W-Wi)} and if Wi > W, V(i, W) = V(i-1, W)`
 
 **Step 2**: Identify subproblems
 
@@ -60,7 +60,7 @@ The key to this approach is trying to increase the global lower bound and decrea
 
 Some optimization procedures can be applied to this algorithm but a basic version can be pictured as follows
 
-Green: local lower bound; Red: space remained; Purple: local upper bound
+**Green**: local lower bound; **Red**: space remained; **Blue**: local upper bound
 
 In the image the local upper bound is all the values of items that haven't been considered plus the values of items in pack.
 
@@ -68,7 +68,7 @@ In the image the local upper bound is all the values of items that haven't been 
 
 #### Implementation
 
-I chose to implement the algorithm with a binary tree where each node in the tree represents a subproblem. Local lower and upper bounds are stored in the nodes with some other variables. The tree structure and the look-up table used in DP are interchangable in the two algorithms. The nodes can be viewed as entries (keys) in the table and the variables attached are the values.
+I chose to implement the algorithm with a binary tree where each node in the tree represents a subproblem. Local lower and upper bounds are stored in the nodes with some other variables. The tree structure and the look-up table used in DP are interchangable in the two algorithms. The nodes can be viewed as entries (keys) in the table and the variables attached are the stored values.
 
 The stack in the main loop enables the program to process the nodes in a depth-first order. We can also use recursion to achieve that.
 
