@@ -3,51 +3,90 @@
 import sys
 import collections
 
+"""
+As required by grader, returned color list must be in the ascending order of the nodes
+i.e., color of node 0, color of node 1, ..., color of node 2
+If the color list indices don't represent nodes, it's hard to check the correctness
+of the solution against the graph
+colors are ints
+"""
 
-def order_nodes_descending_in_degree(node_count, edges):
-    node_to_neighbors = dict()
-    node_degrees = []
+
+def node_to_neighbors(edges):
+    node_to_neighbors = collections.defaultdict(list)
     for edge in edges:
-        key_a = edge[0]
-        key_b = edge[1]
-        if node_to_neighbors.get(key_a) is None:
-            node_to_neighbors[key_a] = [key_b]
-        else:
-            node_to_neighbors[key_a].append(key_b)
-        if node_to_neighbors.get(key_b) is None:
-            node_to_neighbors[key_b] = [key_a]
-        else:
-            node_to_neighbors[key_b].append(key_a)
+        node_to_neighbors[edge[0]].append(edge[1])
+        node_to_neighbors[edge[1]].append(edge[0])
 
-    for key, value in node_to_neighbors.items():
+    return node_to_neighbors
+
+
+def order_nodes_descending_in_degree(node_count, edges, neighbors=None):
+    node_degrees = []
+    if neighbors is None:
+        neighbors = node_to_neighbors(edges)
+
+    for key, value in neighbors.items():
         node_degrees.append((key, len(value)))
 
     node_degrees.sort(key=lambda x: x[1], reverse=True)
     nodes_descending_in_degree = [x[0] for x in node_degrees]
-    return nodes_descending_in_degree, node_to_neighbors
+    return nodes_descending_in_degree
 
 
-def naive_greedy(node_count, edge_count, edges, nodes=None):
+def naive_greedy(node_count, edge_count, edges, nodes=None, neighbors=None):
     if nodes is None:
         nodes = range(node_count)
+    if neighbors is None:
+        neighbors = node_to_neighbors(edges)
+
     colors = range(node_count)
-    # node_color[node_n] = color_k
-    node_color = []
-    neighbor_colors = collections.defaultdict(set())
-    neighbors = collections.defaultdict(set())
+    node_colors = [-1 for x in colors]
+    neighbor_colors = collections.defaultdict(set)
 
     for n in nodes:
         for c in colors:
+            # loop over the neighbor colors
+            # O(n*c*num(neighbor_colors))
             if c not in neighbor_colors[n]:
-                node_color.append = c
+                node_colors[n] = c
+                # loop over the neighbors
+                # O(n*num(neighbors))
                 for neighbor in neighbors[n]:
                     neighbor_colors[neighbor].add(c)
                 break
 
-    output_data = str(node_count) + ' ' + str(0) + '\n'
-    output_data += ' '.join(map(str, node_color))
+    return node_colors
 
-    return output_data
+
+def naive_greedy_alternative(node_count, edge_count, edges, nodes=None, neighbors=None):
+    if nodes is None:
+        nodes = range(node_count)
+    if neighbors is None:
+        neighbors = node_to_neighbors(edges)
+
+    colors = range(node_count)
+    # -1 is better than 0 in some orderings
+    # -1 means all node are unassigned
+    # 0 means all node are assigned 0
+    node_colors = [-1 for x in colors]
+    for node in nodes:
+        my_neighbors = neighbors[node]
+        # try to assign smallest color code possible
+        # do we need to use neighbor_colors more than once?
+        # loop over the neighbors, O(n*num(neighbor))
+        neighbor_colors = set([node_colors[n] for n in my_neighbors])
+        for c in colors:
+            # loop over the neighbor colors
+            if c not in neighbor_colors:
+                node_colors[node] = c
+                break
+
+    # a list where the indices of the list corresponds to the nodes
+    # in which case the order is ascending by nature
+    # and the elements are the colors assigned to the corresponding nodes
+
+    return node_colors
 
 
 def random_greedy():
@@ -58,7 +97,7 @@ def simplified_iterated_greedy():
     pass
 
 
-def solve_it(input_data):
+def solve(input_data, mode='naive_greedy', descending_sort_in_degree=False):
     # Modify this code to run your optimization algorithm
 
     # parse the input
@@ -74,21 +113,15 @@ def solve_it(input_data):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
 
-    nodes_descending_in_degree, node_to_neighbors = \
-        order_nodes_descending_in_degree(edges, node_count)
+    neighbors = node_to_neighbors(edges)
+    if descending_sort_in_degree:
+        nodes_descending_in_degree = order_nodes_descending_in_degree(edges, node_count, neighbors=neighbors)
+    else:
+        nodes_descending_in_degree = None
 
-    node_to_color = {x: 0 for x in range(node_count)}
-    for node in nodes_descending_in_degree:
-        neighbors = node_to_neighbors[node]
-        for neighbor in neighbors:
-            if node_to_color[neighbor] == node_to_color[node]:
-                node_to_color[node] = node_to_color[node] + 1
-
-    solution = [val for key, val in node_to_color.items()]
-    # build a trivial solution
-    # every node has its own color
-    # solution = range(0, node_count)
-
+    solution = naive_greedy_alternative(node_count, edge_count,
+                                        edges, nodes=nodes_descending_in_degree,
+                                        neighbors=neighbors)
     # prepare the solution in the specified output format
     output_data = str(node_count) + ' ' + str(0) + '\n'
     output_data += ' '.join(map(str, solution))
@@ -101,6 +134,6 @@ if __name__ == '__main__':
         file_location = sys.argv[1].strip()
         with open(file_location, 'r') as input_data_file:
             input_data = input_data_file.read()
-        print(solve_it(input_data))
+        print(solve(input_data, descending_sort_in_degree=False))
     else:
         print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/gc_4_1)')

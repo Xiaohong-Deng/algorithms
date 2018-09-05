@@ -32,6 +32,9 @@ As a top-down recursive approach, we can call `solve(itemSize=n, packSize=W)`. I
 
 If we go for a bottom-up approach, we need to compute a sum of combinations. For example, when prefix is {0}, we need all possible `a1*W1 + a2*W2 + ... + an*Wn` where ai is in {0, 1}. The cost of computing the combinations may be significant. Maybe we are better off with computing a solution for each x in {0, 1, ..., W} with a specific prefix.
 
+#### Performance
+As an exhaustive apporach DP doesn't play well with large datasets.
+
 ### Branch and Bound
 
 Branch and bound is also a paradigm looking for subproblems. The set of all subproblems can be viewed as a binary tree (so is the DP approach).
@@ -76,6 +79,10 @@ Coming soon.
 ##### Other Tricks
 
 Coming soon.
+
+#### Performance
+
+Its running time on randomly formed large datasets is pretty good. But you can construct special datasets to prevent pruning from happening. In that case it's worse than DP.
 
 ---
 [problem_def]: ./problem_def.jpg

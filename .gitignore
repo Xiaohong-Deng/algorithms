@@ -4,3 +4,4 @@
 readfile
 readfile.c
 intseq
+gc_*
