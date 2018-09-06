@@ -1,5 +1,5 @@
 # Graph Coloring
-
+![alt text][50_vis]
 ## Problem Definition
 
 ## Paradigms
@@ -12,3 +12,6 @@ On datasets of different sizes **random_greedy** achieves better results than **
 how it is implemented it converges pretty early which means during most of the iterations nothing changes except the order of colors.
 
 **random_greedy_with_color_alternative** always iterates over the solution generated in the previous iteration. Suprisingly it still converges very fast. Despite the fact we are using potentially different solutions every time, the number of colors is almost the same. But this time with `num_iter = 3000` 16 colors for the 500 vertex dataset used for `random_greedy_with_color` can be stablized. Similar effect happens to datasets of other sizes.
+
+---
+[50_vis]: ./50_vis.jpg
