@@ -7,3 +7,4 @@ intseq
 gc_*
 !gc_500_*
 *.out
+*.gch
