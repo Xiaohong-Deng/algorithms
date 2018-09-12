@@ -50,7 +50,7 @@ We also maintain a global lower bound that is one of the folloing values
 1. the best local lower bound in all the nodes explored.
 2. the optimal in-pack value we have confirm thourgh other means like applying an inferior but faster algorithm. The result produced may beat the best local lower bound so far.
 
-The goal is pruning the nodes so running time is reduced. If node is not pruned and we reach the leaf, we have a complete solution to the problem. That is a specific subset of n items and the sum of their values.
+The goal is pruning the nodes so search space/running time is reduced. If node is not pruned and we reach the leaf, we have a complete solution to the problem. That is a specific subset of n items and the sum of their values.
 
 The key to this approach is trying to increase the global lower bound and decrease the local upper bound.
 

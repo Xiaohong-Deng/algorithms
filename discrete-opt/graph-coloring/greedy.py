@@ -271,7 +271,7 @@ def simplified_iterated_greedy():
     pass
 
 
-def solve_it(input_data, mode='naive_greedy', descending_sort_in_degree=True):
+def solve_it(input_data, mode=0, descending_sort_in_degree=True):
     # parse the input
     lines = input_data.split('\n')
 
@@ -285,15 +285,18 @@ def solve_it(input_data, mode='naive_greedy', descending_sort_in_degree=True):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
 
-    if mode == 'naive_greedy':
+    if mode == 0:  # 'naive_greedy'
+        print("naive greedy mode")
         solution = apply_naive_greedy(node_count, edge_count, edges,
                                       descending_sort_in_degree=descending_sort_in_degree)
-    elif mode == 'random_greedy':
+    elif mode == 1:  # 'random_greedy'
+        print("random greedy mode")
         solution = random_greedy(node_count, edge_count, edges)
-    elif mode == 'random_greedy_with_color':
+    elif mode == 2:  # 'random_greedy_with_color'
+        print("random_greedy_with_color mode")
         solution = random_greedy_with_color_alternative(node_count, edge_count, edges)
     # prepare the solution in the specified output format
-    output_data = str(node_count) + ' ' + str(0) + '\n'
+    output_data = str(len(set(solution))) + ' ' + str(0) + '\n'
     output_data += ' '.join(map(str, solution))
 
     return output_data
@@ -302,8 +305,9 @@ def solve_it(input_data, mode='naive_greedy', descending_sort_in_degree=True):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         file_location = sys.argv[1].strip()
+        mode = int(sys.argv[2].strip()) if sys.argv[2].strip() > 0 else 0
         with open(file_location, 'r') as input_data_file:
             input_data = input_data_file.read()
-        print(solve_it(input_data, mode='random_greedy_with_color', descending_sort_in_degree=False))
+        print(solve_it(input_data, mode=mode, descending_sort_in_degree=False))
     else:
         print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/gc_4_1)')
