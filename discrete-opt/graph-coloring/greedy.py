@@ -38,13 +38,7 @@ def order_nodes_descending_in_degree(neighbors):
     return nodes_descending_in_degree
 
 
-def naive_greedy(node_count, edge_count, edges, nodes=None, neighbors=None):
-    if nodes is None:
-        nodes = range(node_count)
-    if neighbors is None:
-        neighbors = node_to_neighbors(edges)
-
-    colors = range(node_count)
+def naive_greedy(colors, nodes, neighbors):
     node_colors = [-1 for x in colors]
     neighbor_colors = collections.defaultdict(set)
 
@@ -63,18 +57,12 @@ def naive_greedy(node_count, edge_count, edges, nodes=None, neighbors=None):
     return node_colors
 
 
-def naive_greedy_alternative(node_count, edge_count, edges, nodes=None, neighbors=None):
+def naive_greedy_alternative(colors, nodes, neighbors):
     """
     Output
     ------
     node_colors: a list of node colors where index i of the list represents node i
     """
-    if nodes is None:
-        nodes = range(node_count)
-    if neighbors is None:
-        neighbors = node_to_neighbors(edges)
-
-    colors = range(node_count)
     # -1 is better than 0 in some orderings
     # -1 means all node are unassigned
     # 0 means all node are assigned 0
@@ -98,9 +86,8 @@ def naive_greedy_alternative(node_count, edge_count, edges, nodes=None, neighbor
     return node_colors
 
 
-def apply_naive_greedy(node_count, edge_count, edges,
-                       nodes=None, node_colors=None, neighbors=None,
-                       descending_sort_in_degree=True):
+def apply_naive_greedy(node_count, edges, colors=None, nodes=None,
+                       neighbors=None, descending_sort_in_degree=True):
     if neighbors is None:
         neighbors = node_to_neighbors(edges)
 
@@ -111,12 +98,13 @@ def apply_naive_greedy(node_count, edge_count, edges,
         # iterator
         nodes = range(node_count)
 
-    return naive_greedy_alternative(node_count, edge_count,
-                                    edges, nodes=nodes,
-                                    neighbors=neighbors)
+    if colors is None:
+        colors = range(node_count)
+
+    return naive_greedy_alternative(colors, nodes, neighbors)
 
 
-def random_greedy(node_count, edge_count, edges, num_iter=100):
+def random_greedy(node_count, edges, num_iter=100):
     """
     in each iteration we unassign all the node colors
     if you don't, while you are iterating through the nodes, you are not updating anything
@@ -124,10 +112,12 @@ def random_greedy(node_count, edge_count, edges, num_iter=100):
     solution = None
     num_colors = node_count
     nodes = [x for x in range(node_count)]
+    max_colors = range(node_count)
+    neighbors = node_to_neighbors(edges)
     for i in range(num_iter):
         random.shuffle(nodes)
-        temp_sol = apply_naive_greedy(node_count, edge_count, edges,
-                                      nodes=nodes, descending_sort_in_degree=False)
+        temp_sol = apply_naive_greedy(node_count, edges, colors=max_colors, nodes=nodes,
+                                      neighbors=neighbors, descending_sort_in_degree=False)
         temp_num_colors = len(set(temp_sol))
         if temp_num_colors < num_colors:
             solution = temp_sol
@@ -136,7 +126,7 @@ def random_greedy(node_count, edge_count, edges, num_iter=100):
     return solution
 
 
-def random_greedy_with_color(node_count, edge_count, edges, num_iter=1000):
+def random_greedy_with_color(node_count, edges, num_iter=1000):
     """
     Run apply_naive_greedy with default settings for the 1st time
     then pick node groups by color randomly. i.e., all nodes colored by 8, all nodes colored by 3, ...
@@ -157,7 +147,8 @@ def random_greedy_with_color(node_count, edge_count, edges, num_iter=1000):
     """
     nodes = [x for x in range(node_count)]
     neighbors = node_to_neighbors(edges)
-    solution = apply_naive_greedy(node_count, edge_count, edges,
+    max_colors = range(node_count)
+    solution = apply_naive_greedy(node_count, edges, colors=max_colors,
                                   nodes=nodes, neighbors=neighbors,
                                   descending_sort_in_degree=True)
     colors = list(set(solution))
@@ -193,7 +184,7 @@ def random_greedy_with_color(node_count, edge_count, edges, num_iter=1000):
                 # already sorted
                 nodes.extend(color_to_nodes[c])
 
-        temp_sol = apply_naive_greedy(node_count, edge_count, edges,
+        temp_sol = apply_naive_greedy(node_count, edges, colors=max_colors,
                                       nodes=nodes, neighbors=neighbors,
                                       descending_sort_in_degree=False)
         temp_colors = set(temp_sol)
@@ -213,13 +204,13 @@ def random_greedy_with_color(node_count, edge_count, edges, num_iter=1000):
     return solution
 
 
-def random_greedy_with_color_alternative(node_count, edge_count, edges, num_iter=3000):
+def random_greedy_with_color_alternative(node_count, edges, num_iter=3000):
     """
     try to work on solutions generated in the last iteration each time
     """
     nodes = [x for x in range(node_count)]
     neighbors = node_to_neighbors(edges)
-    solution = apply_naive_greedy(node_count, edge_count, edges,
+    solution = apply_naive_greedy(node_count, edges,
                                   nodes=nodes, neighbors=neighbors,
                                   descending_sort_in_degree=True)
 
@@ -254,7 +245,7 @@ def random_greedy_with_color_alternative(node_count, edge_count, edges, num_iter
             color_to_nodes[c] = order_nodes_descending_in_degree(neighbors_by_color)
             nodes.extend(color_to_nodes[c])
 
-        running_sol = apply_naive_greedy(node_count, edge_count, edges,
+        running_sol = apply_naive_greedy(node_count, edges,
                                          nodes=nodes, neighbors=neighbors,
                                          descending_sort_in_degree=False)
         running_colors = list(set(running_sol))
@@ -287,14 +278,14 @@ def solve_it(input_data, mode=0, descending_sort_in_degree=True):
 
     if mode == 0:  # 'naive_greedy'
         print("naive greedy mode")
-        solution = apply_naive_greedy(node_count, edge_count, edges,
+        solution = apply_naive_greedy(node_count, edges,
                                       descending_sort_in_degree=descending_sort_in_degree)
     elif mode == 1:  # 'random_greedy'
         print("random greedy mode")
-        solution = random_greedy(node_count, edge_count, edges)
+        solution = random_greedy(node_count, edges)
     elif mode == 2:  # 'random_greedy_with_color'
         print("random_greedy_with_color mode")
-        solution = random_greedy_with_color_alternative(node_count, edge_count, edges)
+        solution = random_greedy_with_color_alternative(node_count, edges)
     # prepare the solution in the specified output format
     output_data = str(len(set(solution))) + ' ' + str(0) + '\n'
     output_data += ' '.join(map(str, solution))
@@ -305,7 +296,9 @@ def solve_it(input_data, mode=0, descending_sort_in_degree=True):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         file_location = sys.argv[1].strip()
-        mode = int(sys.argv[2].strip()) if sys.argv[2].strip() > 0 else 0
+        mode = int(sys.argv[2].strip())
+        if mode < 0 or mode > 3:
+            mode = 0
         with open(file_location, 'r') as input_data_file:
             input_data = input_data_file.read()
         print(solve_it(input_data, mode=mode, descending_sort_in_degree=False))

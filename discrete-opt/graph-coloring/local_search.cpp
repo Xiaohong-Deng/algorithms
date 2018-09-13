@@ -62,26 +62,62 @@ map<int, vector<int>> node_to_neighbors(size_t edge_count, const tuple<int, int>
 }
 
 
-int* naive_greedy(size_t node_count, size_t edge_count, const tuple<int, int> edges[]) {
+int* naive_greedy(size_t node_count, const tuple<int, int> edges[],
+                  const int nodes[], map<int, vector<int>> neighbors) {
+  int* node_colors = new int[node_count];
 
+  for (size_t i = 0; i < node_count; i++) {
+    node_colors[i] = -1;
+  }
+
+  for (size_t i = 0; i < node_count; i++) {
+    vector<int> my_neighbors = neighbors[nodes[i]];
+    vector<int> neighbor_colors;
+    for (size_t j = 0; j < my_neighbors.size(); j++) {
+      neighbor_colors.push_back(node_colors[my_neighbors[j]]);
+    }
+
+    unordered_set<int> neighbor_colors_set(neighbor_colors.begin(), neighbor_colors.end());
+
+    // use max_colors
+    for (size_t j = 0; j < node_count; j++) {
+      if (neighbor_colors_set.find(j) == neighbor_colors_set.end()) {
+        node_colors[i] = j;
+        break;
+      }
+    }
+  }
+
+  return node_colors;
 }
 
 
-int* random_greedy(size_t node_count, size_t edge_count, const tuple<int, int> edges[]) {
-  int* solution = new int[node_count]; // allocate mem on the heap so the local var remains after function call, delete[] it later
-
-  for (size_t i = 0; i < node_count; i++) {
-    solution[i] = -1;
-  }
-
+tuple<size_t, int*> random_greedy(size_t node_count, size_t edge_count, const tuple<int, int> edges[], size_t num_iter) {
+  int* sol; // allocate mem on the heap so the local var remains after function call, delete[] it later
+  size_t num_colors = node_count;
+  /**
+   * TODO: create colors, nodes, neighbors
+   * @param i [description]
+   */
   int nodes[node_count];
+  map<int, vector<int>> neighbors = node_to_neighbors(edge_count, edges);
+
   for (size_t i = 0; i < node_count; i++) {
     nodes[i] = i;
   }
 
-  random_shuffle(&nodes[0], &nodes[node_count]);
+  for (size_t i = 0; i < num_iter; i++) {
+    srand(time(0));
+    random_shuffle(&nodes[0], &nodes[node_count]);
+    int* temp_sol = naive_greedy(node_count, edges, nodes, neighbors);
+    unordered_set<int> temp_colors(temp_sol, temp_sol + node_count);
+    if (temp_colors.size() < num_colors) {
+      sol = temp_sol;
+      num_colors = temp_colors.size();
+    }
+  }
 
-  return solution;
+  return make_tuple(num_colors, sol);
 }
 
 
@@ -102,23 +138,25 @@ int main(int argc, char const *argv[]) {
     size_t edge_count;
     tuple<int, int>* edges;
 
-    tie(node_count, edge_count, edges) = parse_data(file_name);
-    // cout << "node count: " << node_count << endl << "edge count: " << edge_count
-    //      << endl;
+    stringstream solution;
+    size_t num_colors;
+    int* node_colors;
 
-    map<int, vector<int>> ntn = node_to_neighbors(edge_count, edges);
+    tie(node_count, edge_count, edges) = parse_data(file_name);
+
+    // map<int, vector<int>> ntn = node_to_neighbors(edge_count, edges);
+    tie(num_colors, node_colors) = random_greedy(node_count, edge_count, edges);
+
+    solution << num_colors << " 0" << endl;
 
     for (size_t i = 0; i < node_count; i++) {
-      cout << "neighbors of " << i << endl;
-      for (auto j: ntn[i]) {
-        cout << j << " ";
-      }
-      cout << endl;
+      solution << node_colors[i] << " ";
     }
 
-    string solution = local_search(node_count, edge_count, edges);
+    cout << solution.str() << endl;
 
     delete[] edges;
+    delete[] node_colors;
   }
 
   return 0;
