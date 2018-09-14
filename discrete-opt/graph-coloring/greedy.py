@@ -3,6 +3,7 @@
 import sys
 import collections
 import random
+import timeit
 
 """
 As required by grader, returned color list must be in the ascending order of the nodes
@@ -104,7 +105,7 @@ def apply_naive_greedy(node_count, edges, colors=None, nodes=None,
     return naive_greedy_alternative(colors, nodes, neighbors)
 
 
-def random_greedy(node_count, edges, num_iter=100):
+def random_greedy(node_count, edges, num_iter=2000):
     """
     in each iteration we unassign all the node colors
     if you don't, while you are iterating through the nodes, you are not updating anything
@@ -181,7 +182,7 @@ def random_greedy_with_color(node_count, edges, num_iter=1000):
                 nodes.extend(color_to_nodes[c])
         else:
             for c in colors:
-                # already sorted
+                # each color group is already sorted
                 nodes.extend(color_to_nodes[c])
 
         temp_sol = apply_naive_greedy(node_count, edges, colors=max_colors,
@@ -218,15 +219,13 @@ def random_greedy_with_color_alternative(node_count, edges, num_iter=3000):
     running_colors = list(set(solution))
     num_colors = len(running_colors)
 
-    # group nodes by color
-    color_to_nodes = collections.defaultdict(list)
-
     # even if num_colors doesn't change, solution may change, so is color_to_nodes
     for i in range(num_iter):
         # if i % 50 == 0:
-            # print(num_colors)
-            # print(len(running_colors))
-            # print()
+        #     print(num_colors)
+        #     print(len(running_colors))
+        #     print(running_sol[0])
+        #     print()
         nodes = []
         random.shuffle(running_colors)
 
@@ -276,6 +275,7 @@ def solve_it(input_data, mode=0, descending_sort_in_degree=True):
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
 
+    start_time = timeit.default_timer()
     if mode == 0:  # 'naive_greedy'
         print("naive greedy mode")
         solution = apply_naive_greedy(node_count, edges,
@@ -286,6 +286,7 @@ def solve_it(input_data, mode=0, descending_sort_in_degree=True):
     elif mode == 2:  # 'random_greedy_with_color'
         print("random_greedy_with_color mode")
         solution = random_greedy_with_color_alternative(node_count, edges)
+    print("time passed: ", timeit.default_timer() - start_time)
     # prepare the solution in the specified output format
     output_data = str(len(set(solution))) + ' ' + str(0) + '\n'
     output_data += ' '.join(map(str, solution))
@@ -296,9 +297,11 @@ def solve_it(input_data, mode=0, descending_sort_in_degree=True):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         file_location = sys.argv[1].strip()
-        mode = int(sys.argv[2].strip())
-        if mode < 0 or mode > 3:
-            mode = 0
+        mode = 0
+        if len(sys.argv) == 3:
+            mode = int(sys.argv[2].strip())
+            if mode < 0 or mode > 3:
+                mode = 0
         with open(file_location, 'r') as input_data_file:
             input_data = input_data_file.read()
         print(solve_it(input_data, mode=mode, descending_sort_in_degree=False))
