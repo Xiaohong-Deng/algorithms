@@ -40,7 +40,7 @@ def order_nodes_descending_in_degree(neighbors):
 
 
 def naive_greedy(colors, nodes, neighbors):
-    node_colors = [-1 for x in colors]
+    node_colors = [-1 for x in colors]  # maybe # of colors != # of nodes
     neighbor_colors = collections.defaultdict(set)
 
     for n in nodes:
@@ -60,6 +60,8 @@ def naive_greedy(colors, nodes, neighbors):
 
 def naive_greedy_alternative(colors, nodes, neighbors):
     """
+    this is a bit faster, don't know why
+
     Output
     ------
     node_colors: a list of node colors where index i of the list represents node i
@@ -90,7 +92,9 @@ def naive_greedy_alternative(colors, nodes, neighbors):
 def apply_naive_greedy(node_count, edges, colors=None, nodes=None,
                        neighbors=None, descending_sort_in_degree=True):
     if neighbors is None:
+        # start_time = timeit.default_timer()
         neighbors = node_to_neighbors(edges)
+        # print("time for node_to_neighbors: ", timeit.default_timer() - start_time)
 
     if descending_sort_in_degree:
         # list
