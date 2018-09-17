@@ -2,6 +2,8 @@
 ![alt text][50_vis]
 ## Problem Definition
 
+![alt text][problem_def]
+
 ## Paradigms
 ### Greedy
 
@@ -113,3 +115,4 @@ Good hyper-parameters are dataset specific. Tuning is time consuming.
 
 ---
 [50_vis]: ./50_vis.jpg
+[problem_def]: ./problem_def.jpg
