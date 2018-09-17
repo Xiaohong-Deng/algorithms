@@ -44,27 +44,35 @@ On `data/gc_500_1`
 | random greedy with color | seconds | steady 17 | 1000 | Descending within each color group |
 | random greedy with color alternative | seconds | 16 with over 60% chance | 3000 | Descending within each color group |
 
+On `data/gc_1000_5`
+
+| Algorithm | Running Time | Number of Colors | Number of Iterations | Node Sorted in Degree |
+|-----------|--------------|------------------|----------------------|-----------------------|
+| random greedy with color alternative | 60s | 110 to 112 | 3000 | Descending within each color group |
+
 `random_greedy_with_color_alternative` differs from `random_greedy_with_color` in that it iterates over the solution generated in the previous iteration, whereas `random_greedy_with_color` iterates over the global best each time.
+
+Later running on 4 cores with the same `num_iter` produced more stable results.
 
 ### Local Search
 
 4 cores and compiled with `-O2`.
 
-On `data/gc_500_1`.
+On `data/gc_500_1`
 
 | Algorithm | Running Time | Number of Colors | Number of Iterations | Starting Solution | Neighbor Searching | Neighbor Choosing | Restart Heuristic |
 |-----------|--------------|------------------|----------------------|-------------------|--------------------|-------------------|---------|
-| Local Search | seconds | 20 | 1 | non-iterated random greedy | random pick node | first legal neighbor | no move for 500 neighbors |
+| Local Search | miliseconds | 20 | 1 | non-iterated random greedy | random pick node | first legal neighbor | no move for 500 neighbors |
 | same as above | 0.5s | 18 | 400 | same as above | same as above | same as above | same as above |
 
-On `data/gc_1000_5`.
+On `data/gc_1000_5`
 
 | Algorithm | Running Time | Number of Colors | Number of Iterations | Starting Solution | Neighbor Searching | Neighbor Choosing | Restart Heuristic |
 |-----------|--------------|------------------|----------------------|-------------------|--------------------|-------------------|---------|
 | Local Search | 3s | 111 | 50 | non-iterated random greedy | random pick node | first legal neighbor | no move for 500 neighbors |
 | same as above | 47s | 110 | 800 | same as above | same as above | same as above | same as above |
 | Simulated Annealing | 7s | 101 or 100 | 1 | saa | random pick node and color | take worse neighbor with prob. | temperature drop below 1.0 |
-| Simulated Annealing | 1750s | 100 | 200 | saa | random pick node and color | take worse neighbor with prob. | temperature drop below 1.0 |
+| Simulated Annealing | 1750s | 101 or 100 | 200 | saa | random pick node and color | take worse neighbor with prob. | temperature drop below 1.0 |
 
 
 #### Local Search
@@ -79,13 +87,19 @@ Neighbor searching strategy is as follows:
 
 3. If no color is legal for the node move to the next random node
 
+4. If no move for n random node, abort searching and restart.
+
 #### Simulated Annealing
+
+Pure simulated annealing may not be the most performant or optimal approach. People got better and faster solutions with tabu search or kemp chain. Mix all of them is also good.
 
 Reheating: No
 
 Cooling: Drop temperature fast in early stage. Drop slower when lower. Need careful tuning.
 
 On my CPU I can do approx. 60 million neighbor searches within 7 seconds. There is a trade-off between restart times and neighbor searching times in each restart. Either you do more restarts and fewer neighbor searches or the other way around by tuning the parameters. There is also a similar trade-off between number of searches at a higher temperature and number of searches at a lower temperature.
+
+For the set of hyper-parameters I tuned, 200 iterations doesn't bring convergence to 100 colors. In each iteration, it makes about 57000+ neighbor moves. Maybe I need to make some kind of trade-off.
 
 One crucial thing is neighbor searching strategy. I tried several but present two here. One is bad at performance the other is good.
 
