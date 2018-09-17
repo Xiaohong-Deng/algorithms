@@ -209,7 +209,7 @@ def random_greedy_with_color(node_count, edges, num_iter=1000):
     return solution
 
 
-def random_greedy_with_color_alternative(node_count, edges, num_iter=3000):
+def random_greedy_with_color_alternative(node_count, edges, num_iter=6000):
     """
     try to work on solutions generated in the last iteration each time
     """

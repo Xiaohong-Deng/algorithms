@@ -1,5 +1,27 @@
-// #pragma GCC optimize(2)
 #include "local_search.h"
+
+
+double fast_exp(double p) {
+  unsigned long bits = (unsigned long) (1512775 * p + (1072693248 - 60801));
+  bits = bits << 32;
+  double result;
+  memcpy(&result, &bits, sizeof(bits));
+  return result;
+}
+
+
+void update_state(int node, int current_color, size_t new_color, int num_bn_new_color,
+                  int new_Bi, int new_Ci, int new_Bj, int new_Cj,
+                  int* sol, int* color_to_bad_edges, int* color_to_size, int* node_to_bad_edges) {
+  // color config
+  sol[node] = new_color;
+
+  color_to_bad_edges[current_color] = new_Bi;
+  color_to_bad_edges[new_color] = new_Bj;
+  color_to_size[current_color] = new_Ci;
+  color_to_size[new_color] = new_Cj;
+  node_to_bad_edges[node] = num_bn_new_color;
+}
 
 
 tuple<size_t, size_t, tuple<int, int>*> parse_data(string file_name) {
@@ -63,13 +85,14 @@ int* naive_greedy(size_t node_count, const int nodes[], unordered_map<int, vecto
 
   // loop over nodes
   for (size_t i = 0; i < node_count; i++) {
-    vector<int> my_neighbors = neighbors[nodes[i]];
+    int cur_node = nodes[i];
+    vector<int> my_neighbors = neighbors[cur_node];
     // index for color, value 1 for neighbor color yes and 0 for no
     int neighbor_colors[node_count] = {};
 
     // loop over neighbors
-    for (size_t j = 0; j < my_neighbors.size(); j++) {
-      int neighbor_color = node_colors[my_neighbors[j]];
+    for (auto nb: my_neighbors) {
+      int neighbor_color = node_colors[nb]; // might be -1, which is the element before array[0]
       if (neighbor_color >= 0 && neighbor_colors[neighbor_color] == 0) {
         neighbor_colors[neighbor_color] = 1;
       }
@@ -78,7 +101,7 @@ int* naive_greedy(size_t node_count, const int nodes[], unordered_map<int, vecto
     // use max_colors
     for (size_t j = 0; j < node_count; j++) {
       if (neighbor_colors[j] == 0) {
-        node_colors[i] = j;
+        node_colors[cur_node] = j;
         break;
       }
     }
@@ -119,20 +142,6 @@ tuple<size_t, int*> random_greedy(size_t node_count, size_t edge_count,
   }
 
   return make_tuple(num_colors, sol);
-}
-
-
-void update_state(int node, int current_color, size_t new_color, int num_bn_new_color,
-                  int new_Bi, int new_Ci, int new_Bj, int new_Cj,
-                  int* sol, int* color_to_bad_edges, int* color_to_size, int* node_to_bad_edges) {
-  // color config
-  sol[node] = new_color;
-
-  color_to_bad_edges[current_color] = new_Bi;
-  color_to_bad_edges[new_color] = new_Bj;
-  color_to_size[current_color] = new_Ci;
-  color_to_size[new_color] = new_Cj;
-  node_to_bad_edges[node] = num_bn_new_color;
 }
 
 
@@ -287,6 +296,9 @@ tuple<size_t, int*> sim_annealing(size_t node_count, size_t edge_count,
   // vector<vector<int>> color_to_nodes(num_colors, vector<int>());
   tie(num_colors, sol) = random_greedy(node_count, edge_count, neighbors, 1);
 
+  size_t start_num_colors = num_colors;
+  uniform_int_distribution<size_t> color_distr(0, start_num_colors);
+
   opt_num_colors = num_colors;
   // we change the state of sol constantly, so we need a deep copy of sol to opt_sol
   for (size_t i = 0; i < node_count; i++) {
@@ -294,17 +306,19 @@ tuple<size_t, int*> sim_annealing(size_t node_count, size_t edge_count,
   }
   // initialize color_to_size
   for (size_t i = 0; i < node_count; i++) {
-   int color = sol[i];
-   color_to_size[color]++;
+    int color = sol[i];
+    color_to_size[color]++;
   }
 
   // initialize Ci and obj_val
   for (size_t i = 0; i < num_colors; i++) {
-   obj_val -= color_to_size[i] * color_to_size[i];
+    obj_val -= color_to_size[i] * color_to_size[i];
   }
 
   // bookkeeping the number of times you choose a random neighbor
-  int count = 0;
+  size_t alpha_count = 0;
+  // size_t overall_count = 0;
+  size_t alpha_update_threshold = 640;
 
   while (temperature > threshold) {
     // randomly pick a neighbor first, iterate over all colors to see if obj_val is improved
@@ -314,41 +328,78 @@ tuple<size_t, int*> sim_annealing(size_t node_count, size_t edge_count,
     int Bi = color_to_bad_edges[cur_color];
     int Ci = color_to_size[cur_color];
     int Bi_nd = node_to_bad_edges[nd];
-    int Bj;
-    int Cj;
     int new_Bi = Bi - node_to_bad_edges[nd];
     int new_Ci = Ci - 1;
-    int new_Bj; // number of bad edges in color j by changing node n color
-    int new_Cj; // number of nodes in color j by change node n color
-    int num_bn_cj; // number of bad neighbors in color j
-    int delta;
-    double accept_rate;
-    double accept;
-    int term_i;
-    int term_j;
 
-    for (size_t j = 0; j < num_colors; j++) {
-      if ((int) j != cur_color) {
-        Bj = color_to_bad_edges[j];
-        Cj = color_to_size[j];
-        new_Bj = Bj;
-        new_Cj = Cj + 1;
-        num_bn_cj = 0;
+    // say we start with 5 colors
+    // during the loop color 3 is reduced to 0 members
+    // num_colors--, but color 4 still has members
+    // we want to consider color 4 when changing colors
+    // so we loop over start_num_colors
+    // that said, we do not consider larger colors not in our starting point sol
+    //
+    // not longer iterate through all the colors becasue we are willing to move to a worse neighbor
+    // it is only fair to pick a color at random, but if the node has no better neighbors it will get stuck
+    // when temperature is low
 
-        for (auto nb: neighbors[nd]) {
-          if (sol[nb] == (int) j) {
-            num_bn_cj++;
-          }
+    size_t j = color_distr(gen);
+    if ((int) j != cur_color) {
+      int Bj = color_to_bad_edges[j];
+      int Cj = color_to_size[j];
+      int new_Bj = Bj; // number of bad edges in color j by changing node n color
+      int new_Cj = Cj + 1; // number of nodes in color j by change node n color
+      int num_bn_cj = 0; // number of bad neighbors in color j
+
+      for (auto nb: neighbors[nd]) {
+        if (sol[nb] == (int) j) {
+          num_bn_cj++;
+        }
+      }
+
+      new_Bj += num_bn_cj;
+
+      int term_i = Bi_nd - Bi - Bi_nd*Ci; // might be negative, no shift
+      int term_j = Bj + Cj * num_bn_cj + num_bn_cj; // positive
+      // delta needs to be < 0
+      int delta = (Ci << 1) - (Cj << 1) - 2 + term_i + term_i + (term_j << 1);
+
+
+      if (delta < 0) {
+        obj_val += delta;
+        bad_edges += num_bn_cj - Bi_nd;
+
+        if (new_Ci == 0) {
+          num_colors--;
         }
 
-        new_Bj += num_bn_cj;
+        if (Cj == 0) {
+          num_colors++;
+        }
 
-        term_i = Bi_nd - Bi - Bi_nd*Ci; // might be negative, no shift
-        term_j = Bj + Cj * num_bn_cj + num_bn_cj; // positive
-        // delta needs to be < 0
-        delta = (Ci << 1) - (Cj << 1) - 2 + term_i + term_i + (term_j << 1);
+        update_state(nd, cur_color, j, num_bn_cj,
+                     new_Bi, new_Ci, new_Bj, new_Cj,
+                     sol, color_to_bad_edges, color_to_size, node_to_bad_edges);
 
-        if (delta < 0) {
+        if (bad_edges == 0 && num_colors < opt_num_colors) {
+          opt_num_colors = num_colors;
+          for (size_t l = 0; l < node_count; l++) {
+            opt_sol[l] = sol[l];
+          }
+        }
+        // update temperature
+        temperature *= alpha;
+        alpha_count++;
+        if (alpha_count == alpha_update_threshold) {
+          alpha *= alpha_rate;
+          // alpha_count = 0;
+          // alpha_update_threshold *= 7.196;
+        }
+      } else {
+        double accept_rate = fast_exp(-delta / temperature);
+        // accept_rate = exp(-delta / temperature);
+        double accept = acceptance_distr(gen);
+
+        if (accept < accept_rate) {
           obj_val += delta;
           bad_edges += num_bn_cj - Bi_nd;
 
@@ -364,44 +415,20 @@ tuple<size_t, int*> sim_annealing(size_t node_count, size_t edge_count,
                        new_Bi, new_Ci, new_Bj, new_Cj,
                        sol, color_to_bad_edges, color_to_size, node_to_bad_edges);
 
-          if (bad_edges == 0 && num_colors < opt_num_colors) {
-            opt_num_colors = num_colors;
-            for (size_t k = 0; k < node_count; k++) {
-              opt_sol[k] = sol[k];
-            }
-          }
-        } else {
-          accept_rate = exp(-delta / temperature);
-          accept = acceptance_distr(gen);
-
-          if (accept < accept_rate) {
-            obj_val += delta;
-            bad_edges += num_bn_cj - Bi_nd;
-
-            if (new_Ci == 0) {
-              num_colors--;
-            }
-
-            if (Cj == 0) {
-              num_colors++;
-            }
-
-            update_state(nd, cur_color, j, num_bn_cj,
-                         new_Bi, new_Ci, new_Bj, new_Cj,
-                         sol, color_to_bad_edges, color_to_size, node_to_bad_edges);
-
-          }
+         // update temperature
+         temperature *= alpha;
+         alpha_count++;
+         if (alpha_count == alpha_update_threshold) {
+           alpha *= alpha_rate;
+           // alpha_count = 0;
+           // alpha_update_threshold *= 7.196;
+         }
         }
       }
     }
-    // update temperature
-    temperature *= alpha;
-    count++;
-    if (count == 1500) {
-      alpha *= alpha_rate;
-      count = 0;
-    }
+    // overall_count++;
   }
+  // cout << "overall_count: " << overall_count << endl;
 
   return make_tuple(opt_num_colors, opt_sol);
 }
@@ -412,7 +439,6 @@ tuple<size_t, int*> iterated_local_search(size_t node_count, size_t edge_count,
                                           int threshold) {
   cout << "mode: " << mode << endl;
   cout << "num_iter in local search: " << num_iter << endl;
-  cout << "threshold before restart local search: " << threshold << endl;
 
   size_t num_colors;
   int* sol;
