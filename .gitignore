@@ -5,7 +5,7 @@ readfile
 readfile.c
 intseq
 gc_*
-!gc_500_*
+!gc_500_1
 !gc_1000_1
 *.out
 *.gch
