@@ -1,11 +1,16 @@
+__pycache__
 .classpath
 .project
 *.class
 readfile
 readfile.c
 intseq
+.pytest_cache
 gc_*
 !gc_500_1
 !gc_1000_1
+tsp_*
+!tsp_utils.py
 *.out
 *.gch
+*.csv

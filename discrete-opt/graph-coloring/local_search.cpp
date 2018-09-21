@@ -1,6 +1,6 @@
 #include "local_search.h"
 
-
+// long and unsigned long are 64-bit in Ubuntu and 32-bit in Windows
 double fast_exp(double p) {
   unsigned long bits = (unsigned long) (1512775 * p + (1072693248 - 60801));
   bits = bits << 32;
