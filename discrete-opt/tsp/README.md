@@ -1,5 +1,23 @@
 # Traveling Salesman Problem
 
+## Paradigms
+### Greedy
+
+### Local Search
+#### Guided Local Search
+
+#### Fast Local Search
+activate sub-neighborhoods
+> Moves will affect part of the solution directly or indirectly while leaving other parts unaffected. If a sub-neighborhood contains affected parts then it needs to be activated since an opportunity could be arise there for an improving move as a result of the original move performed.
+
+I think the sub-neighborhoods contain the affected parts are the neighborhoods where the affected parts change or further changes involve the affected parts such that we get new configurations. This collection of new configurations is the sub-neighborhoods needed to be activated.
+
+This is somehow a greedy heuristic. We get an improvement by going into the sub-neighborhoods contain the affected parts. So we assume we will have a better chance to get even better improvements by focusing on the parts we just changed (change them again).
+
+#### Guided Fast Local Search
+
+Another heuristic of activating sub-neighborhoods is the sub-neighborhoods the features being penalized is involved should be activated in the hope of removing the features.
+
 ## Performance
 
 i5-3470 CPU, Ubuntu 18.04, run on all 4 cores
@@ -33,13 +51,15 @@ I tried self-defined look-up table building function and `scipy.spatial.distance
 
 One should generate a distance look-up table and store it in disk as a file for future use.
 
-On the other hand for the 33810 node dataset things are interesting. Parallel computing just paralyzed. 3 cores were idle. Look-up table just doesn't work.
+#### Large Datasets
 
-The symptom was when running on 4 cores RAM consumed was 11 GB. When running on 1 core RAM consumed was 16 GB. 16 GB is all I got. So I think in the 4 cores case the idle cores were just not able to load the data to RAM!!!
+When dealing with a 33810-node dataset, my 16 GB memory exploded with 2d numpy array. First `np.genfromtext` takes over 7 times more memory to load a file. So is `np.loadtxt`. `np.savetxt` doesn't correctly save the complete data to file. It truncates the data.
+
+Some other ways work and some don't. I found that HDF5 works. The 2d array is 9.1 GB. So is the `.h5` file. If you specify `dtype=float32` you can halve the size.
 
 #### Other Tries to Memory & Speed Trade-Off
 
-Surprisingly condensed array doesn't bring faster run! So I reduced `num_iter` and run on 1 core to get more precise results.
+Surprisingly condensed matrix doesn't bring faster run! So I reduced `num_iter` and run on 1 core to get more precise results.
 
 run on 1 core
 
@@ -51,13 +71,39 @@ run on 1 core
 | Random Greedy | 1889 | 7.09s(building csv) | 5 | Matrix |
 | Random Greedy | 1889 | 6.55s(reading csv) | 5 | Matrix |
 
-condensed matrix as `pdist`
+Hash table, although computing hash value may be no cheaper than computing index. It take more space.
 
-cache on the fly
+2d array where inner arrays have different sizes. Only two or three arithmetic operations fewer.
 
 multithreading instead of multiprocessing so they share the `dist_table`
 
 
 ### Local Search
+#### Distance Table
+I designed an experiment in C++ to test which is faster, `sqrt`, index computing or 2d array accessing. If I didn't design it wrong, this is the benchmarks I got.
+
+With compiler optimization `-O2` on, loop over the operations for 2 million times each.
+
+| Cache Method | Time |
+|--------------|------|
+| No | 0.01s |
+| Condensed Matrix | 0.002s |
+| 2D Array | 0.006s |
+
+With compiler optimization off, loop over for the same number of times.
+
+| Cache Method | Time |
+|--------------|------|
+| No | 0.04s |
+| Condensed Matrix | 0.24s |
+| 2D Array | 0.24s |
+
+Maybe condensed array is not bad in C++. Plus it's about 2.3 GB for 33810-node dataset.
+
+Because HDF5 files are binary with metadata, I believe `H5Cpp.h` directly loads or `memcopy` HDF5 files from disk to memory. It's the fastest way and requires contiguous space in memory.
+
+2-Opt is our neighbor move here. A 2-Opt results in a reverse sub-sequence of the tour or the other 2 segments of the tour (reverse them and change there positions), depending on which is shorter. The sequence is directed, by reversing you change the direction of the sub-sequence which incurs a O(n) operation. This is true for linked list or double linked list.
+
+To achieve O(1) neighbor move (2-OPT), we keep 2 identical tour except that they have opposite directions. When swap we cut off the segment in the middle for both sequences. We swap the segment to the other sequence respectively. We connect the end points for 2 new pairs respectively. e.g., i to j and k to l turning to i to k and j to l.
 
 ---

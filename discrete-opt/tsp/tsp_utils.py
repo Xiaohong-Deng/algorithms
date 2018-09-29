@@ -47,7 +47,7 @@ def line_to_coord_points(line):
 def parse_data(input_data, mode=2):
     """
     mode 0: store coordinates as Points
-    mode 1: store coordinates as matrix
+    mode 1: store coordinates as n by 2 matrix
     points: list of Points with coords as members
     """
     lines = input_data.split('\n')

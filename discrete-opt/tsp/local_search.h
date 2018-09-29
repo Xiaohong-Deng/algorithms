@@ -5,6 +5,7 @@
 #include <cstring>
 #include <ctime>
 #include <fstream>
+#include <H5Cpp.h>
 #include <iostream>
 #include <iterator>
 #include <math.h>
@@ -17,5 +18,9 @@
 #include <vector>
 
 using namespace std;
+using namespace H5;
+
+float* load_dist_table(const size_t node_count, string file_name, string ds_name);
+size_t parse_node_count(string file_name);
 
 #endif

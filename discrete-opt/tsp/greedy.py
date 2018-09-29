@@ -73,8 +73,6 @@ def probe_and_insert(seq_start, point, dist_table):
 def probe_and_insert_no_cache(seq_start, point, coords):
     """
     point is an int
-    this is a method relies on look-up table entirely
-    no distance computing
     """
     min_increment = sys.float_info.max
     cur_node = seq_start
@@ -330,7 +328,7 @@ def random_greedy(node_count, dist_table_coords, num_iter=5, mode=0):
                 best_seq = seq_start
                 best_dist = total_dist
     else:
-        print("need at least one of dist_table and coords to not be None")
+        print("need mode as an integer ranged from 0 to 3 inclusive")
 
     cur_node = best_seq
     solution = [best_seq.value]
@@ -344,10 +342,10 @@ def random_greedy(node_count, dist_table_coords, num_iter=5, mode=0):
 
 def solve_it(input_data, file_location, mode=1):
     """
-    mode 0: fly cache, good for large datasets around tens of thousands
-    mode 1: load dist_table, good for small datasets up to a couple thousand nodes before memory explosion
-    mode 2: load dist_array, don't know how large it can handle, larger than mode 1 is for sure
-    mode 3: no cache, slowest setting, good for small dataset but workable for all datasets
+    mode 0: fly cache, use minimum memory at decent speed, good for large datasets around tens of thousands
+    mode 1: load dist_table, fastest and take max memory, good for small datasets up to a couple thousand nodes before memory explosion
+    mode 2: load dist_array, use half of the size as mode 1. don't know how large it can handle, larger than mode 1 is for sure
+    mode 3: no cache, slowest with least memory use, good for small dataset but workable for all datasets
     """
     node_count, coords = parse_data(input_data, mode)
     # if this program is run as a subprocess load_dist_table might create a race
@@ -362,7 +360,7 @@ def solve_it(input_data, file_location, mode=1):
         if node_count > 1000:
             num_iter = 100
         else:
-            num_iter = 1000
+            num_iter = 4000
 
         solution, total_dist = random_greedy(node_count, dist_table, num_iter, mode)
 
