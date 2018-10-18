@@ -16,9 +16,7 @@ How to pick the new color? color with most nodes first? or just iterate from col
 
 Or we just randomly pick a node?
 
-Randomness: gcc/MinGW has `random_device` deterministic behaviors on Windows. Use Boost or change platform.
-
-Now C++ implementation running time on `node_to_neighbors` and `naive_greedy` is twice slower than python. Need to change data structures
+Randomness: gcc/MinGW64 has `random_device` deterministic behaviors on Windows. Use Boost or change platform.
 
 If move data structures used in python to c++ directly, performance drops. Try array as much as possible. Try `unordered_map` which is hash table whereas `map` is BST.
 

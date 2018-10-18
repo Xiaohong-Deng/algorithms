@@ -31,7 +31,6 @@ tuple<size_t, int*> sim_annealing(size_t node_count, size_t edge_count, unordere
                                   mt19937 generator, uniform_int_distribution<int> distribution, uniform_real_distribution<double> acceptance_distr,
                                   double threshold=1.0, double temperature=2.0, double alpha=0.999, double alpha_rate=1.001);
 // default num_iter should be defined here not .cpp otherwise other .cpp file won't be able to see it
-// num_iter=14600 with 4 cores sim_annealing can be done in 30 minutes
 tuple<size_t, int*> iterated_local_search(size_t node_count, size_t edge_count, const tuple<int, int> edges[], int mode=0, size_t num_iter=5, int threshold=500);
 
 #endif

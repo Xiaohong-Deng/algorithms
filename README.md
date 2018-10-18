@@ -19,8 +19,6 @@ Currently has the following problems
 
 Documentations are available under the subdirectory, including papers from which my code implementation employed various techniques.
 
-Also there is a random graph generator in C which employs `srand48` and `drand48` that are only available in Unix like system.
-
 ### ML and AI Algorithms
 | Folder |
 |--------|
