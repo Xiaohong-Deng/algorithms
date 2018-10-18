@@ -9,8 +9,12 @@ intseq
 gc_*
 !gc_500_1
 !gc_1000_1
-tsp_*
-!tsp_utils.py
 *.out
 *.gch
 *.csv
+nanoflann.hpp
+dist_table*
+ls_struct.*
+ls_no_pred_suc.*
+*.txt
+gfls.*
