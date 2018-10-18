@@ -6,9 +6,20 @@
 
 ## Paradigms
 ### Greedy
+Greedy algorithms other than iterated greedy are pretty straight forward in code. Iterated greedy can be found in _Exploring-k-Colorable-Lanscape-with-Iterated-Greedy_ at `reference-papers`. A simplified version can be found in Chapter 2 of _A Guide to Experimental Algorithmics_.
 
 ### Local Search
-Neighbor definition: change the color of a node.
+In local search, several ingredients need to be formulated for given problems, differently. They are
+
+1. Neighborhood and neighbors
+2. Objective function
+3. Neighbor searching strategy
+
+Neighbor definition: new configuration by changing the color of a node.
+
+Objective function: compound of minimizing bad edges and color used. Fewer colors tends to incur bad edges.
+
+We start with a given configuration where each node is colored. This configuration needs not to be optimal or feasible.
 
 How to pick the node to change color? pick a color class with fewest nodes. Then pick a node with fewest degree?
 
@@ -16,13 +27,15 @@ How to pick the new color? color with most nodes first? or just iterate from col
 
 Or we just randomly pick a node?
 
+## Implementation Tips
+
 Randomness: gcc/MinGW64 has `random_device` deterministic behaviors on Windows. Use Boost or change platform.
 
 If move data structures used in python to c++ directly, performance drops. Try array as much as possible. Try `unordered_map` which is hash table whereas `map` is BST.
 
 Use -O2
 
-squeeze performance as much as possible from the objective function computation.
+Make the objective function computationally efficient.
 
 ## Performance
 
@@ -91,7 +104,7 @@ Neighbor searching strategy is as follows:
 
 #### Simulated Annealing
 
-Pure simulated annealing may not be the most performant or optimal approach. People got better and faster solutions with tabu search or kemp chain. Mix all of them is also good.
+Pure simulated annealing may not be the most efficient or optimal approach. People got better and faster solutions with tabu search or kemp chain. Mix all of them is also good.
 
 Reheating: No
 
@@ -103,7 +116,7 @@ For the set of hyper-parameters I tuned, 200 iterations doesn't bring convergenc
 
 One crucial thing is neighbor searching strategy. I tried several but present two here. One is bad at performance the other is good.
 
-1. Randomly pick a node and randomly pick a color for this node. If accept the neighbor then move on to the next node. If the neighbor is not accepted, randomly pick another color for this node again for n times. n is a hyper-parameter.
+1. Randomly pick a node and randomly pick a color for this node. If accept the neighbor then move on to the next node. If the neighbor is not accepted, randomly pick another color for this node again for n times until accepted or move on after n times. n is a hyper-parameter.
 
 2. Randomly pick a node and randomly pick a color. Move on to the next node no matter the pair of node and color is accepted. This is a more random strategy than the previous one.
 

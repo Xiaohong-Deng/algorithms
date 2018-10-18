@@ -16,6 +16,7 @@ Currently has the following problems
 
 1. 0-1 knapsack
 2. graph coloring
+3. traveling salesman problem
 
 Documentations are available under the subdirectory, including papers from which my code implementation employed various techniques.
 

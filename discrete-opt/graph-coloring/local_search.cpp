@@ -63,6 +63,10 @@ unordered_map<int, vector<int>> node_to_neighbors(size_t node_count, size_t edge
     neighbors[i] = vector<int>();
   }
 
+  // the last place we need edges tuple array
+  // since we need to extract two end points
+  // seperately why we just store them in seperate
+  // arrays in the 1st place?
   for (size_t i = 0; i < edge_count; i++) {
     int v1 = get<0>(edges[i]);
     int v2 = get<1>(edges[i]);
@@ -218,11 +222,13 @@ tuple<size_t, int*> local_search(size_t node_count, size_t edge_count,
 
         new_Bj += num_bn_cj;
 
-        term_i = Bi_nd - Bi - Bi_nd*Ci; // might be negative, no shift
-        term_j = Bj + Cj * num_bn_cj + num_bn_cj; // positive
+        term_i = Bi_nd - Bi - Bi_nd*Ci; // might be negative, shift left is sometimes wrong if signed
+        term_j = Bj + Cj * num_bn_cj + num_bn_cj; // positive, shift left is wrong sometimes if signed
         // delta needs to be < 0
-        delta = (Ci << 1) - (Cj << 1) - 2 + term_i + term_i + (term_j << 1);
-
+        // delta = (Ci << 1) - (Cj << 1) - 2 + term_i * 2 + (term_j << 1);
+        // can we use above delta instead? No, shifting signed numbers gives incorrect results sometimes
+        // shift unsigned then cast them to signed may overflow
+        delta = (Ci - Cj - 1 + term_i + term_j) * 2;
         // remove old Ci^2, Cj^2, 2*Bi*Ci and 2*Bj*Cj from obj_val
 
         // add new Ci^2, Cj^2, 2*Bi*Ci, and 2*Bj*Cj to obj_val
@@ -429,7 +435,7 @@ tuple<size_t, int*> sim_annealing(size_t node_count, size_t edge_count,
     // overall_count++;
   }
   // cout << "overall_count: " << overall_count << endl;
-
+  delete[] sol;
   return make_tuple(opt_num_colors, opt_sol);
 }
 
@@ -490,6 +496,7 @@ tuple<size_t, int*> iterated_local_search(size_t node_count, size_t edge_count,
 
   cout << endl;
 
+  delete[] ls_sol;
   return make_tuple(num_colors, sol);
 }
 
