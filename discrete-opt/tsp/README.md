@@ -1,5 +1,11 @@
 # Traveling Salesman Problem
 
+![alt-text][51_vis]
+
+## Problem Definition
+
+![alt-text][problem_def]
+
 ## Paradigms
 ### Greedy
 
@@ -141,6 +147,17 @@ Because HDF5 files are binary with metadata, I believe `H5Cpp.h` directly loads 
 
 2-Opt is our neighbor move here. A 2-Opt results in a reverse sub-sequence of the tour or the other 2 segments of the tour (reverse them and change their positions), depending on which is shorter (note by reverse the shorter one we reduce the running time by half on average, but it's not the case for array like containers because reversing and swapping the prefix and suffix may incur shifting the middle segment). The sequence is directed, by reversing you change the direction of the sub-sequence which incurs a O(n) operation. This is true for linked list, array-like containers or double linked list.
 
+Run on 1 core
+
+| Algorithms | Dataset Size | Distance |Running Time | Number of Iterations | Cached Distance Table |
+|------------|--------------|----------|--------------|----------------------|-----------------------|
+| Guided Fast Local Search | 428.8718 | 51 | 0.01s | 600 | Condensed Matrix |
+| Same | 20750.7625 | 100 | 0.026s | 1000 | Same |
+| Same | 29453.9269 | 200 | 0.126s | 3000 | Same |
+| Same | 319927.0843 | 1889 | 23.8s | 30000 | Same |
+
+To get a decent result on 33810-node dataset it requires hours so I skipped it.
+
 #### Can We Do Better
 I don't know if O(1) state change is possible. But if it is, it would be as follows.
 
@@ -197,3 +214,5 @@ for (auto it = numbers.begin(); it != numbers.end();) {
 ```
 
 ---
+[51_vis]: ./51_vis.png
+[problem_def]: ./problem_def.png

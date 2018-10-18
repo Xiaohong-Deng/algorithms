@@ -181,7 +181,7 @@ void update_tour(const size_t node_count, size_t seg_start, size_t seg_end, size
 
 void update_state(const size_t node_count, const size_t seg_start, const size_t seg_end,
                   size_t aug_tour[], double new_e1, double new_e2, double edges[],
-                  size_t pred[], size_t suc[], size_t index[], unordered_set<size_t>& is_active) {
+                  size_t index[], unordered_set<size_t>& is_active) {
   // cout <<"updating..."<<endl;
   // cout << "before: tour[seg_start] is " << aug_tour[seg_start] << endl;
   // cout << seg_start << " " << seg_end <<endl;
@@ -206,11 +206,7 @@ void update_state(const size_t node_count, const size_t seg_start, const size_t 
     t1 = aug_tour[seg_start - 1];
   }
 
-  suc[t1] = t2;
-
   edges[t1_idx] = new_e1;
-  pred[t2] = t1;
-  suc[t2] = aug_tour[seg_start + 1];
   index[t2] = seg_start;
   is_active.insert(t1);
   is_active.insert(t2);
@@ -221,11 +217,7 @@ void update_state(const size_t node_count, const size_t seg_start, const size_t 
     t4 = aug_tour[seg_end + 1];
   }
 
-  pred[t4] = t3;
-
   edges[seg_end] = new_e2;
-  pred[t3] = aug_tour[seg_end - 1];
-  suc[t3] = t4;
   index[t3] = seg_end;
   is_active.insert(t3);
   is_active.insert(t4);
@@ -233,8 +225,6 @@ void update_state(const size_t node_count, const size_t seg_start, const size_t 
   for (size_t i = seg_start + 1; i < seg_end; i++) {
     size_t cur = aug_tour[i];
     index[cur] = i;
-    pred[cur] = aug_tour[i - 1];
-    suc[cur] = aug_tour[i + 1];
   }
 }
 
@@ -248,7 +238,6 @@ tuple<size_t, size_t, double, double, double, double> compare_edges(const size_t
   size_t e2_idx = condensed_index(t3, t4, node_count);
   size_t p2 = penalties[e2_idx];
   double e2 = edges[i];
-  assert(fabs(e2 - dist_table[e2_idx]) < EPSILON);
 
   size_t new_e1_idx = condensed_index(t1, t3, node_count);
   size_t new_e2_idx = condensed_index(t2, t4, node_count);
@@ -281,9 +270,9 @@ tuple<size_t, size_t, double, double, double, double> compare_edges(const size_t
 
 
 tuple<bool, double, double, double> compare_edges_to_update_best_legal(const size_t node_count, double total_dist, double aug_total_dist, double min_total_dist,
-                                                      size_t t1, size_t t1_idx, size_t t2, size_t p1, double e1, double lambda,
-                                                      size_t tour[], size_t aug_tour[], double edges[], size_t pred[], size_t suc[], size_t index[],
-                                                      const double dist_table[], const size_t penalties[], unordered_set<size_t>& is_active) {
+                                                                       size_t t1, size_t t1_idx, size_t t2, size_t p1, double e1, double lambda, size_t tour[],
+                                                                       size_t aug_tour[], double edges[], size_t index[], const double dist_table[],
+                                                                       const size_t penalties[], unordered_set<size_t>& is_active) {
   bool updated = false;
   double max_aug_delta = numeric_limits<double>::max();
   vector<tuple<size_t, size_t, double, double, double>> seg_index_candidates;
@@ -337,7 +326,7 @@ tuple<bool, double, double, double> compare_edges_to_update_best_legal(const siz
     tie(seg_start, seg_end, new_e1, new_e2, delta) = seg_index_candidates[idx];
     total_dist += delta;
     aug_total_dist += max_aug_delta;
-    update_state(node_count, seg_start, seg_end, aug_tour, new_e1, new_e2, edges, pred, suc, index, is_active);
+    update_state(node_count, seg_start, seg_end, aug_tour, new_e1, new_e2, edges, index, is_active);
     updated = true;
   }
 
@@ -346,9 +335,9 @@ tuple<bool, double, double, double> compare_edges_to_update_best_legal(const siz
 
 
 tuple<bool, double, double, double> compare_edges_to_update_first_legal(const size_t node_count, double total_dist, double aug_total_dist, double min_total_dist,
-                                                      size_t t1, size_t t1_idx, size_t t2, size_t p1, double e1, double lambda,
-                                                      size_t tour[], size_t aug_tour[], double edges[], size_t pred[], size_t suc[], size_t index[],
-                                                      const double dist_table[], const size_t penalties[], unordered_set<size_t>& is_active) {
+                                                                        size_t t1, size_t t1_idx, size_t t2, size_t p1, double e1, double lambda, size_t tour[],
+                                                                        size_t aug_tour[], double edges[], size_t index[], const double dist_table[],
+                                                                        const size_t penalties[], unordered_set<size_t>& is_active) {
   bool updated = false;
   for (size_t i = 0; i < node_count - 1; i++) {
     // if 2 edges overlap swap breaks the circle
@@ -370,7 +359,7 @@ tuple<bool, double, double, double> compare_edges_to_update_first_legal(const si
       if (aug_delta < -EPSILON) {
         aug_total_dist += aug_delta;
         total_dist += delta;
-        update_state(node_count, seg_start, seg_end, aug_tour, new_e1, new_e2, edges, pred, suc, index, is_active);
+        update_state(node_count, seg_start, seg_end, aug_tour, new_e1, new_e2, edges, index, is_active);
         // early return to search in the next sub-neighborhood
         updated = true;
         return make_tuple(updated, min_total_dist, total_dist, aug_total_dist);
@@ -394,7 +383,7 @@ tuple<bool, double, double, double> compare_edges_to_update_first_legal(const si
     if (aug_delta < -EPSILON) {
       aug_total_dist += aug_delta;
       total_dist += delta;
-      update_state(node_count, seg_start, seg_end, aug_tour, new_e1, new_e2, edges, pred, suc, index, is_active);
+      update_state(node_count, seg_start, seg_end, aug_tour, new_e1, new_e2, edges, index, is_active);
       updated = true;
     }
   }
@@ -405,8 +394,8 @@ tuple<bool, double, double, double> compare_edges_to_update_first_legal(const si
 
 tuple<double, double, double> fast_local_search(double aug_total_dist, double total_dist, double min_total_dist,
                                         const size_t node_count, const double lambda, const double dist_table[],
-                                        const size_t penalties[], size_t tour[], size_t pred[], size_t suc[], size_t index[],
-                                        size_t aug_tour[], double edges[], unordered_set<size_t>& is_active) {
+                                        const size_t penalties[], size_t tour[], size_t index[], size_t aug_tour[],
+                                        double edges[], unordered_set<size_t>& is_active) {
   // compare, swap, update
   while (!is_active.empty()) {
     for (auto it = is_active.begin(); it != is_active.end();) {
@@ -427,11 +416,10 @@ tuple<double, double, double> fast_local_search(double aug_total_dist, double to
       e1 = edges[t1_idx];
       e1_idx = condensed_index(t1, t2, node_count);
       p1 = penalties[e1_idx];
-      assert(fabs(e1 - dist_table[e1_idx]) < EPSILON);
 
       tie(updated, min_total_dist, total_dist, aug_total_dist) = compare_edges_to_update_best_legal(node_count, total_dist, aug_total_dist, min_total_dist,
-                                                                                t1, t1_idx, t2, p1, e1, lambda, tour, aug_tour, edges, pred, suc, index,
-                                                                                dist_table, penalties, is_active);
+                                                                                                    t1, t1_idx, t2, p1, e1, lambda, tour, aug_tour, edges,
+                                                                                                    index, dist_table, penalties, is_active);
       // if we early returned we go to the next sub-neighborhood
       // the rest of this iteration won't be executed so we don't need
       // to update old_aug_total_dist
@@ -452,10 +440,9 @@ tuple<double, double, double> fast_local_search(double aug_total_dist, double to
       e1 = edges[t1_idx];
       e1_idx = condensed_index(t1, t2, node_count);
       p1 = penalties[e1_idx];
-      assert(fabs(e1 - dist_table[e1_idx]) < EPSILON);
       tie(updated, min_total_dist, total_dist, aug_total_dist) = compare_edges_to_update_best_legal(node_count, total_dist, aug_total_dist, min_total_dist,
-                                                                                t1, t1_idx, t2, p1, e1, lambda, tour, aug_tour, edges, pred, suc, index,
-                                                                                dist_table, penalties, is_active);
+                                                                                                    t1, t1_idx, t2, p1, e1, lambda, tour, aug_tour, edges,
+                                                                                                    index, dist_table, penalties, is_active);
       if (!updated) {
         it = is_active.erase(it);
       } else {
@@ -470,8 +457,6 @@ tuple<double, double, double> fast_local_search(double aug_total_dist, double to
 
 tuple<double, size_t*> guided_fast_local_search(const size_t node_count, const double dist_table[], const size_t num_iter) {
   double total_dist;
-  size_t* pred = new size_t[node_count];
-  size_t* suc = new size_t[node_count];
   size_t* tour = new size_t[node_count];
   // node to idx in tour
   size_t* index = new size_t[node_count];
@@ -497,20 +482,12 @@ tuple<double, size_t*> guided_fast_local_search(const size_t node_count, const d
   shuffle(&tour[0], &tour[node_count], rng);
 
   size_t cur = tour[0];
-  pred[cur] = tour[node_count - 1];
-  suc[cur] = tour[1];
   index[cur] = 0;
-  size_t prev = cur;
   for (size_t i = 1; i < node_count - 1; i++) {
     cur = tour[i];
     index[cur] = i;
-    pred[cur] = prev;
-    suc[cur] = tour[i + 1];
-    prev = cur;
   }
   cur = tour[node_count - 1];
-  pred[cur] = prev;
-  suc[cur] = tour[0];
   index[cur] = node_count - 1;
 
   // node represents sub-neighborhood
@@ -529,19 +506,17 @@ tuple<double, size_t*> guided_fast_local_search(const size_t node_count, const d
   double alpha = 0.3;
   double lambda = 0.0;
   tie(min_total_dist, total_dist, aug_total_dist) = fast_local_search(aug_total_dist, total_dist, min_total_dist,
-                                                      node_count, lambda, dist_table, penalties, tour,
-                                                      pred, suc, index, aug_tour, edges, is_active);
+                                                                      node_count, lambda, dist_table, penalties,
+                                                                      tour, index, aug_tour, edges, is_active);
   lambda = (alpha * min_total_dist) / node_count;
   update_penalty_and_active_neighborhood(node_count, lambda, aug_tour, edges, aug_total_dist, penalties, is_active);
   for (size_t i = 1; i < num_iter; i++) {
     // update configuration and return a local minima value for aug_total_dist and total_dist
     tie(min_total_dist, total_dist, aug_total_dist) = fast_local_search(aug_total_dist, total_dist, min_total_dist,
-                                                        node_count, lambda, dist_table, penalties, tour,
-                                                        pred, suc, index, aug_tour, edges, is_active);
+                                                                        node_count, lambda, dist_table, penalties, tour,
+                                                                        index, aug_tour, edges, is_active);
     update_penalty_and_active_neighborhood(node_count, lambda, aug_tour, edges, aug_total_dist, penalties, is_active);
   }
-  delete[] pred;
-  delete[] suc;
   delete[] index;
   delete[] edges;
   delete[] penalties;
