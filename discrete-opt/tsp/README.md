@@ -2,6 +2,14 @@
 
 ![alt-text][51_vis]
 
+## Contents
+
+1. [Paradigms](#paradigms)
+2. [Performance](#performance)
+    1. [Greedy](#perf-greedy)
+    2. [Local Search](#perf-ls)
+3. [Pitfalls](#pitfalls)
+
 ## Problem Definition
 
 ![alt-text][problem_def]
@@ -53,6 +61,7 @@ Make sure generate `dist_table` through `table_gen.py`
 
 i5-3470 CPU, Ubuntu 18.04, run on all 4 cores
 
+<a name="perf-greedy"></a>
 ### Greedy
 
 | Algorithms | Dataset Size | Running Time | Distance | Number of Iterations | Cached Distance Table |
@@ -120,6 +129,7 @@ Number of iterations is 1 million
 
 Truncating `float64` or `float` to `float32` or `float16` worsens `sqrt`. Maybe it has something to do with how `math.sqrt` works. It converts them back?
 
+<a name="perf-ls"></a>
 ### Local Search
 
 #### Distance Table
