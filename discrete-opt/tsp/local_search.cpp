@@ -137,7 +137,6 @@ void update_penalty_and_active_neighborhood(const size_t node_count, const doubl
   } else if (util == max_util) {
     penalized.push_back(make_tuple(ni, nj, idx));
   }
-  // cout << "max_util: " << max_util << endl;
   for (auto p : penalized) {
     penalties[get<2>(p)]++;
     is_active.insert({get<0>(p), get<1>(p)});
@@ -182,12 +181,8 @@ void update_tour(const size_t node_count, size_t seg_start, size_t seg_end, size
 void update_state(const size_t node_count, const size_t seg_start, const size_t seg_end,
                   size_t aug_tour[], double new_e1, double new_e2, double edges[],
                   size_t index[], unordered_set<size_t>& is_active) {
-  // cout <<"updating..."<<endl;
-  // cout << "before: tour[seg_start] is " << aug_tour[seg_start] << endl;
-  // cout << seg_start << " " << seg_end <<endl;
   // update aug_tour
   update_tour(seg_start, seg_end, aug_tour, edges);
-  // cout << "after: tour[seg_start] is " << aug_tour[seg_start] << endl;
   // corner case where seg_start = 0 or node_count - 1
   // note we rule out the possibility of seg_start = 0 and seg_end = node_count - 1
   // because that implies t1->t2 = t3-t4

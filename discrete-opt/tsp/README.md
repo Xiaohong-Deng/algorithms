@@ -23,6 +23,8 @@
 |--------------------|----------|------|------------------|
 | length of tour | edges | edge length | 2-Opts that involves a certain node |
 
+Please read [VouTsa-Gls-MetaHeuristic2003][0]. The next a few paragraphs are more like reading notes of the paper.
+
 #### Guided Local Search
 
 Use a penalization term in objective function to guide the local search. If search is stuck in a local minima, update the penalty for all features. Start the search for local minima again with the augmented objective, hoping that the penalty will guide the search to escape the local minima.
@@ -226,3 +228,4 @@ for (auto it = numbers.begin(); it != numbers.end();) {
 ---
 [51_vis]: ./51_vis.png
 [problem_def]: ./problem_def.png
+[0]: https://github.com/Xiaohong-Deng/algorithms/blob/master/discrete-opt/reference-papers/VouTsa-Gls-MetaHeuristic2003.pdf

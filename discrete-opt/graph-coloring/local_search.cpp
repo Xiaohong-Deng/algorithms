@@ -235,8 +235,6 @@ tuple<size_t, int*> local_search(size_t node_count, size_t edge_count,
 
         // first legal neighbor
         if (delta < 0) {
-          // cout << temp_obj_val << endl;
-          // cout << "found new obj_val" << endl;
           // maintain new obj_val
           obj_val += delta;
           // color config
