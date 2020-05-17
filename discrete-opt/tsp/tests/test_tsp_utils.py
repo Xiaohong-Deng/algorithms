@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
-import sys
 import inspect
+from tsp_utils import gen_dist_table, load_dist_table, Point
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
+# sys.path.insert(0, parentdir)
 
-from tsp_utils import gen_dist_table, load_dist_table, Point
 
 FILE_PATH = parentdir + '/data/tsp_5_1'
 NODE_COUNT = 5

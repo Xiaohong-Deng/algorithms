@@ -74,7 +74,6 @@ def PLA(fname, num_iters=2000):
             # labels_shuffled[incorrect_indices[0][0]] is a scalar
             # samples_shuffled[incorrect_indices[0][0]] is of the shape (1, num_feat)
             weights += 0.999 * labels_shuffled[target_idx] * samples_shuffled[target_idx, :]
-            # print(np.matmul(samples_shuffled[target_idx, :], weights))
             update += 1
             start_idx = target_idx + 1
 

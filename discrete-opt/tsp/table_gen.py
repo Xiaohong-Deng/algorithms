@@ -20,6 +20,7 @@ def append_dataset(ds, fn):
 
 
 def main():
+    """Store sets of distances between points as ndarrays to h5 file"""
     file_pat = './data/tsp_*_*'
     data_files = glob.glob(file_pat)
 
@@ -29,7 +30,9 @@ def main():
     for f in data_files:
         with open(f, 'r') as fh:
             input_data = fh.read()
+        # coord_mat is n by 2 matrix as ndarray
         node_count, coord_mat = parse_data(input_data)
+        # condensed_array is ndarray
         condensed_array = gen_dist_table(node_count, coord_mat)
         fp.create_dataset(os.path.basename(f), data=condensed_array, dtype='float64')
 

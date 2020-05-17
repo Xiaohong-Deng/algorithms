@@ -52,8 +52,10 @@ def solve_it(file_name, threads=4):
         buf = StringIO(i)
         all_lines = buf.readlines()
         dist_and_proof = all_lines[0].split()
-        if float(dist_and_proof[0]) < opt_dist:
+        cur_dist = float(dist_and_proof[0])
+        if cur_dist < opt_dist:
             output_data = i
+            opt_dist = cur_dist
 
     return output_data
 

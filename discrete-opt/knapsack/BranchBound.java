@@ -86,7 +86,6 @@ public class BranchBound {
         // valBest may be updated while creating the right node so I choose to prune the left in the next iteration in line 71
         if (left.valInPack >= valBest) {
           valBest = left.valInPack;
-//          StdOut.println("best update: " + valBest);
         }
       }
       int[] takenRight = currentNode.taken;

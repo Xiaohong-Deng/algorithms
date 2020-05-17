@@ -183,6 +183,7 @@ void update_state(const size_t node_count, const size_t seg_start, const size_t 
                   size_t index[], unordered_set<size_t>& is_active) {
   // update aug_tour
   update_tour(seg_start, seg_end, aug_tour, edges);
+  /*
   // corner case where seg_start = 0 or node_count - 1
   // note we rule out the possibility of seg_start = 0 and seg_end = node_count - 1
   // because that implies t1->t2 = t3-t4
@@ -190,6 +191,7 @@ void update_state(const size_t node_count, const size_t seg_start, const size_t 
 
   // node in the segment needs to update both its pred and suc
   // the two nodes adjacent to the segment need to update their suc or pred
+  */
   size_t t1, t2, t3, t4, t1_idx;
   t2 = aug_tour[seg_start];
   t3 = aug_tour[seg_end];

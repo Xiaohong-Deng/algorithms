@@ -46,7 +46,7 @@ def line_to_coord_points(line):
 
 def parse_data(input_data, mode=2):
     """
-    mode 0: store coordinates as Points
+    mode 0: store coordinates as list of Points
     mode 1: store coordinates as n by 2 matrix
     points: list of Points with coords as members
     """
@@ -85,6 +85,12 @@ def load_dist_table(file_name, node_count, coords, mode=2):
 
 
 def gen_dist_table(node_count, coords, mode=2):
+    """
+    Output
+    ---------
+    0 gives default dictionary
+    1 and 2 give numpy array
+    """
     if mode == 0:
         table = dist_table(node_count, coords)
     elif mode == 1:

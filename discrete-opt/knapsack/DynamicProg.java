@@ -75,20 +75,16 @@ public class DynamicProg {
   //@return list of items which are selected as opt solution
   public Iterable<Integer> itemList() {
     if (!isSolved) return null;
-//    StdOut.println("Am I called?");
     Queue<Integer> itemList = new Queue<Integer>();
     int currentItemSize = itemSize;
     int currentPackSize = packSize;
     for (int i = itemSize; i >= 0; i--) {
-//      StdOut.println("item size value: " + cache.get(Arrays.asList(currentItemSize, currentPackSize)));
-//      StdOut.println("former item size value: " + cache.get(Arrays.asList(currentItemSize - 1, currentPackSize)));
       if (currentPackSize == 0) {
         break;
       }
       int oneExclude = cache.get(Arrays.asList(currentItemSize - 1, currentPackSize));
       int current = cache.get(Arrays.asList(currentItemSize, currentPackSize));
       if (oneExclude != current) {
-//        StdOut.println("Is equal? " + (oneExclude == current));
         StdOut.println("current val in pack: " + current);
         StdOut.println("current val in pack with current item excluded: " + oneExclude);
         StdOut.println("current packsize: " + currentPackSize);
@@ -115,14 +111,9 @@ public class DynamicProg {
       weights[i] = scanner.nextInt();
     }
     scanner.close();
-//    StdOut.println(itemSize);
-//    StdOut.println(packSize);
-//    for (int i = 0; i < itemSize; i++) {
-//      StdOut.println(value)
-//    }
+
     DynamicProg problem = new DynamicProg(itemSize, packSize, weights, values);
     int maxVal = problem.solver();
-//    StdOut.println(problem.getCacheHit());
     StdOut.println("The optimal value is: " + maxVal);
 
 //    problem.getCache();
