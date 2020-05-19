@@ -10,9 +10,9 @@ Algorithmic implementations for self-contained and distinct mini-problems. From 
 
 NP-hard or NP-complete problems that non-exponential solutions is not possible for general cases. What we can do includes find feasible solutions for special or common cases, try approximation as opposed to optimal solutions.
 
-More than one approaches for each of the problems.
+More than one approach for each of the problems.
 
-Currently has the following problems
+For now it has the following problems
 
 1. 0-1 knapsack
 2. graph coloring
@@ -23,8 +23,13 @@ Documentations are available under the subdirectory, including papers from which
 ### ML and AI Algorithms
 | Folder |
 |--------|
-|ML-AI-algo|
+|AIML|
 
 Prototypes or simplified algorithmic applications that serve as demonstrations.
+
+For now it has the following algorithms
+
+1. Gaussian naive Bayes
+2. Perceptron learning algorithm and its variant pocket learning algorithm.
 
 Documentations are available under the subdirectory.
