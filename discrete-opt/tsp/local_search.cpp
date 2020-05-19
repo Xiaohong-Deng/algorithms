@@ -2,8 +2,10 @@
 #define EPSILON 1e-6
 
 
-// a flaw is this function can't take care of i=j
+// this function can't take care of i=j
+// which is not a use case of condensed distance array
 size_t condensed_index(size_t i, size_t j, size_t n) {
+  assert(i != j);
   if (i < j) {
     size_t temp = j;
     j = i;

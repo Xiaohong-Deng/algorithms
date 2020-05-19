@@ -55,25 +55,6 @@ def solve_it(file_name, mode=1, threads=4):
                 output_data = all_lines[2] + all_lines[3]
             opt_num_colors = cur_num_colors
 
-    # if node_count == 1000:
-    #     for i in results:
-    #         buf = StringIO(i)
-    #         all_lines = buf.readlines()
-    #         colors_and_proof = all_lines[4].split()
-    #         cur_num_colors = int(colors_and_proof[0])
-    #         if cur_num_colors < opt_num_colors:
-    #             output_data = all_lines[4] + all_lines[5]
-    #             opt_num_colors = cur_num_colors
-    # else:
-    #     for i in results:
-    #         buf = StringIO(i)
-    #         all_lines = buf.readlines()
-    #         colors_and_proof = all_lines[2].split()
-    #         cur_num_colors = int(colors_and_proof[0])
-    #         if cur_num_colors < opt_num_colors:
-    #             output_data = all_lines[2] + all_lines[3]
-    #             opt_num_colors = cur_num_colors
-
     return output_data
 
 

@@ -60,7 +60,7 @@ def naive_greedy(colors, nodes, neighbors):
 
 def naive_greedy_alternative(colors, nodes, neighbors):
     """
-    this is a bit faster, don't know why
+    This is a bit faster, don't know why
 
     Output
     ------
@@ -111,7 +111,7 @@ def apply_naive_greedy(node_count, edges, colors=None, nodes=None,
 
 def random_greedy(node_count, edges, num_iter=2000):
     """
-    in each iteration we unassign all the node colors
+    In each iteration we unassign all the node colors
     if you don't, while you are iterating through the nodes, you are not updating anything
     """
     solution = None
@@ -164,7 +164,7 @@ def random_greedy_with_color(node_count, edges, num_iter=1000):
 
     for i in range(num_iter):
         # if i % 50 == 0:
-            # print(num_colors)
+        #     print(num_colors)
         nodes = []
         random.shuffle(colors)
 
@@ -210,9 +210,7 @@ def random_greedy_with_color(node_count, edges, num_iter=1000):
 
 
 def random_greedy_with_color_alternative(node_count, edges, num_iter=6000):
-    """
-    try to work on solutions generated in the last iteration each time
-    """
+    """Try to work on solutions generated in the last iteration each time"""
     nodes = [x for x in range(node_count)]
     neighbors = node_to_neighbors(edges)
     solution = apply_naive_greedy(node_count, edges,
