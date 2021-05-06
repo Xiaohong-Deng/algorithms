@@ -138,4 +138,4 @@ if __name__ == '__main__':
         print(PLA(pla_file))
         print(pocket(pocket_train, pocket_test))
     else:
-        print('Please provide paths to files corresponding to PLA dataset, pocket training set and pocket test set')
+        print('Please provide the files corresponding to PLA dataset, pocket training set and pocket test set')

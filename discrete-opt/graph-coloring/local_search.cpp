@@ -543,6 +543,8 @@ int main(int argc, char const *argv[]) {
 
     delete[] edges;
     delete[] node_colors;
+  } else {
+    std::cout << "Please provide the file containing the graph." << '\n';
   }
 
   return 0;

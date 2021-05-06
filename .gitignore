@@ -19,3 +19,4 @@ ls_no_pred_suc.*
 *.txt
 gfls.*
 .ipynb_checkpoints
+.vscode
