@@ -16,18 +16,21 @@ public class ReversedLinkedList {
   }
 
   public ReversedLinkedList(Node first) {
-    if (first == null) return first;
-    Node currentNode = first;
-    Node next = currentNode.next;
-    Node newNext = null;
-    while (next != null) {
+    if (first == null) {
+      revFirst = null;
+    } else {
+      Node currentNode = first;
+      Node next = currentNode.next;
+      Node newNext = null;
+      while (next != null) {
+        currentNode.next = newNext;
+        newNext = currentNode;
+        currentNode = next;
+        next = currentNode.next;
+      }
       currentNode.next = newNext;
-      newNext = currentNode;
-      currentNode = next;
-      next = currentNode.next;
+      revFirst = currentNode;
     }
-    currentNode.next = newNext;
-    reFirst = currentNode;
   }
 
   public Node getRevFirst() {

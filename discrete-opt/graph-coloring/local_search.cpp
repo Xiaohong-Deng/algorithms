@@ -1,4 +1,5 @@
 #include "local_search.h"
+#include <filesystem>
 
 // long and unsigned long are 64-bit in Ubuntu and 32-bit in Windows
 double fast_exp(double p) {
@@ -92,7 +93,8 @@ int* naive_greedy(size_t node_count, const int nodes[], unordered_map<int, vecto
     int cur_node = nodes[i];
     vector<int> my_neighbors = neighbors[cur_node];
     // index for color, value 1 for neighbor color yes and 0 for no
-    int neighbor_colors[node_count] = {};
+    int neighbor_colors[node_count];
+    memset(neighbor_colors, 0, node_count * sizeof(int));
 
     // loop over neighbors
     for (auto nb: my_neighbors) {

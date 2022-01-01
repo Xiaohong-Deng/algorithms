@@ -113,7 +113,7 @@ public class BranchBound {
   private double relaxRoot() {
     Arrays.sort(items, Collections.reverseOrder());
     for (int i = 0; i < items.length; i++) {
-      StdOut.println(items[i].vwRatio);
+      System.out.println(items[i].vwRatio);
     }
     weightsOrderByDense = new int[itemSize];
     valuesOrderByDense = new int[itemSize];
@@ -203,7 +203,6 @@ public class BranchBound {
   }
 
   public static void main(String[] args) throws Exception {
-    // TODO Auto-generated method stub
     File in = new File(args[0]);
     Scanner scanner = new Scanner(in);
     int itemSize = scanner.nextInt();
