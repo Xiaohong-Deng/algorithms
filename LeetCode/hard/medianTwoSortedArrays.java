@@ -49,11 +49,8 @@ public class medianTwoSortedArrays {
         // variant is the numbers of elements the short and long array contribute to the left subarray
         while (true) {
             // corner cases are determined by i, left and right
-            // case 1 search space has one element, it means the algorithm is about to end
-            System.out.println(left + " " + right);
+            // case 1 search space has one element, one comparison, search ending
             if (right == left) {
-                // in this case we only want to know if we want to keep this element or not, so we only have one comparison
-                // elements outside of the search space are either in the left subarray or not
                 // arrayS[i - 1] in the left subarray
                 if (arrayS[i - 1] <= arrayL[j]) {
                     ans = getAns(arrayS, arrayL, i, j);
@@ -64,7 +61,7 @@ public class medianTwoSortedArrays {
                 break;
             }
 
-            // case 2 search space has more than one element, we draw a line between two elements
+            // case 2 search space has more than one element, we draw a line between two elements, two comparisons
             if (arrayS[i - 1] <= arrayL[j] && arrayS[i] >= arrayL[j - 1]) {
                 ans = getAns(arrayS, arrayL, i, j);
                 break;

@@ -1,6 +1,7 @@
+package LeetCode.easy;
 import java.util.Arrays;
 
-public class Solution {
+public class validAnagram {
   public boolean isAnagram(String s, String t) {
     if (s == null && t == null) return true;
     if (s == null || t == null) return false;
