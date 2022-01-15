@@ -65,7 +65,6 @@ public class numIslandsUF {
 
     public int getNumIslands(char[][] grid) {
         UF forest = new UF(grid);
-        int ans = 0;
         int nrows, ncols;
         nrows = grid.length;
         ncols = grid[0].length;

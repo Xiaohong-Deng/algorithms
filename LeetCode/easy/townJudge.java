@@ -1,5 +1,4 @@
 package LeetCode.easy;
-import java.util.Arrays;
 
 public class townJudge {
     public int findTownJudge(int n, int[][] trust) {
