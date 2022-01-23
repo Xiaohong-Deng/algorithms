@@ -1,12 +1,15 @@
 package LeetCode.medium;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.ArrayList;
 
 public class BSTIterator {
 
     private List<Integer> orderedTree;
     private int index;
+
+    private Stack<TreeNode> stack;
 
     public static class TreeNode {
         int val;
@@ -25,8 +28,11 @@ public class BSTIterator {
         // you can flatten the BST here
         this.orderedTree = new ArrayList<>();
         this.index = 0;
-
         orderTree(root);
+
+        stack = new Stack<>();
+
+        orderUntilLeftMost(root);
     }
     
     public int next() {
@@ -35,6 +41,20 @@ public class BSTIterator {
     
     public boolean hasNext() {
         return index < orderedTree.size();
+    }
+
+    public int next2() {
+        TreeNode ans = stack.pop();
+
+        if (ans.right != null) {
+            orderUntilLeftMost(ans.right);
+        }
+
+        return ans.val;
+    }
+
+    public boolean hasNext2() {
+        return this.stack.size() > 0;
     }
 
     private void orderTree(TreeNode node) {
@@ -46,5 +66,13 @@ public class BSTIterator {
         this.orderedTree.add(node.val);
 
         orderTree(node.right);
+    }
+
+    private void orderUntilLeftMost(TreeNode node) {
+        // we can use if but that causes recursion
+        while (node != null) {
+            stack.push(node);
+            node = node.left;
+        }
     }
 }
