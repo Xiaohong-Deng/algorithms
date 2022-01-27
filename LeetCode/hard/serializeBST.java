@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import LeetCode.medium.BSTIterator;
 import LeetCode.medium.BSTIterator.TreeNode;
 
 public class serializeBST {
