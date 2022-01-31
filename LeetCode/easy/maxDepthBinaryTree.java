@@ -1,3 +1,6 @@
+package LeetCode.easy;
+
+import LeetCode.easy.invertBinaryTree.TreeNode;
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -7,7 +10,7 @@
  *     TreeNode(int x) { val = x; }
  * }
  */
-public class Solution {
+public class maxDepthBinaryTree {
   public int maxDepth(TreeNode root) {
     return maxDepth(root, 0);
   }

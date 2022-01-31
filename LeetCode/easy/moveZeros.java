@@ -1,4 +1,6 @@
-public class Solution {
+package LeetCode.easy;
+
+public class moveZeros {
   public void moveZeroes(int[] nums) {
     int[] temp = new int[nums.length];
     for (int i = 0, j = 0; i < nums.length; i++ ) {

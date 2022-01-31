@@ -1,3 +1,5 @@
+package LeetCode.easy;
+
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -7,7 +9,13 @@
  *     TreeNode(int x) { val = x; }
  * }
  */
-public class Solution {
+public class invertBinaryTree {
+  public static class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+  }
   public TreeNode invertTree(TreeNode root) {
     if (root != null) {
       TreeNode temp = root.left;
