@@ -29,4 +29,44 @@ public class TrapRainWater {
         
         return ans;
     }
+
+    public int trapTwoArray(int[] height) {
+        int ans = 0;
+        if (height.length == 0) return ans;
+
+        int[] prefixMax = new int[height.length];
+        int[] suffixMax = new int[height.length];
+
+        prefixMax[0] = height[0];
+        for (int i = 1; i < prefixMax.length; i++) {
+            if (height[i] > prefixMax[i - 1]) {
+                prefixMax[i] = height[i];
+            } else {
+                prefixMax[i] = prefixMax[i - 1];
+            }
+        }
+
+        suffixMax[height.length - 1] = height[height.length - 1];
+        for (int i = suffixMax.length - 2; i >= 0; i--) {
+            if (height[i] > suffixMax[i + 1]) {
+                suffixMax[i] = height[i];
+            } else {
+                suffixMax[i] = suffixMax[i + 1];
+            }
+        }
+
+        for (int i = 0; i < height.length; i++) {
+            ans += Math.min(prefixMax[i], suffixMax[i]) - height[i];
+        }
+
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        int[] height = {0,1,0,2,1,0,1,3,2,1,2,1};
+        TrapRainWater test = new TrapRainWater();
+
+        System.out.println(test.trap(height));
+        System.out.println(test.trapTwoArray(height));
+    }
 }
