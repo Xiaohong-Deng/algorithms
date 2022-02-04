@@ -32,10 +32,6 @@ public class topKFreq {
             return keys;
         }
 
-        // k starts at 1, but rselect takes index starting at 0
-        // for (int i = 1; i < k + 1; i++) {
-        //     rselect(ans, keys, counts, keys.length - i, keys.length - k);
-        // }
         selectMinK(ans, keys, counts, keys.length - k);
 
         return ans;
@@ -53,13 +49,12 @@ public class topKFreq {
         while (rank != minK) {
             if (rank < minK) {
                 start = rank + 1;
-                pivot = ThreadLocalRandom.current().nextInt(start, end + 1);
-                rank = swap(keys, counts, start, end, pivot);
             } else {
                 end = rank - 1;
-                pivot = ThreadLocalRandom.current().nextInt(start, end + 1);
-                rank = swap(keys, counts, start, end, pivot);
             }
+
+            pivot = ThreadLocalRandom.current().nextInt(start, end + 1);
+            rank = swap(keys, counts, start, end, pivot);
         }
 
         for (int i = rank; i < keys.length; i++) {
@@ -77,42 +72,10 @@ public class topKFreq {
         }
     }
 
-    // return kth least frequent number, k is 0 indexed
-    // unlike normal rselect because we go from (n-1)th to (n-k)th, we know (n-1)th element is in place when we look for (n-2)th element, so we do not start
-    // search from 0 to n-1.
-    // During one rselect call we might have multiple rank that are greater than minK, but cahcing them are bad idea
-    // if we have counts[1, 1, 2, 2] and keys [5, 6, 7, 8]. If we get rank = 1 while looking for rank = 3, if 5 is chosen as the pivot for rank = 1 we have [6, 5, 7, 8]
-    // next time we may randomly select 6 as the pivot it also ends up with rank = 1, we do not update but we have [5, 6, 7, 8], what if next we search 0 to 0 and find out that 5 is for rank = 0
-    // thus 5 appears twice in ans
-    // simpler way to deal with this is first select most frequent in range 0 to n - 1, then 2nd most frequent in range 0 to n - 2. So the elements in ans[] do not get chosen as pivot in subsequent rselect
-    private void rselect(int[] ans, int[] keys, int[] counts, int k, int minK) {
-        int start, end, pivot, rank;
-
-        start = 0;
-        end = k;
-        pivot = ThreadLocalRandom.current().nextInt(0, end + 1);
-
-        rank = swap(keys, counts, start, end, pivot);            
-
-        while (rank != k) {
-            if (rank < k) {
-                start = rank + 1;
-                pivot = ThreadLocalRandom.current().nextInt(start, end + 1);
-                rank = swap(keys, counts, start, end, pivot);
-            } else {
-                end = rank - 1;
-                pivot = ThreadLocalRandom.current().nextInt(start, end + 1);
-                rank = swap(keys, counts, start, end, pivot);
-            }
-        }
-
-        ans[keys.length - rank - 1] = keys[rank];
-    }
-
     private int swap(int[] keys, int[] counts, int start, int end, int pivot) {
         int i, j, temp;
 
-        i = j = 1;
+        i = j = start + 1;
 
         temp = counts[pivot];
         counts[pivot] = counts[start];
