@@ -24,6 +24,7 @@ public class combSum {
     // we can use the number multiple times so it is not a problem where we decide if we take a number or not
     // it is another branch and bound where for each position we take one of the numbers available and go to next position until target is below 0 or 0
     // the number of positions are infinite;
+    // to avoid dups like [2, 2, 3], [3, 2, 2] we start the search from the index at which the first element is and the elements after it.
     private void dfs(List<List<Integer>> ans, int[] candidates, List<Integer> tempSoln, int start, int target, int maxDepth) {
         if (target == 0) {
             List<Integer> sol = new ArrayList<>();
