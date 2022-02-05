@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.PriorityQueue;
 
 // use two heaps one min pq and one max pq
-// to keep them balanced when we have one element we keep it in an variable median
+// to keep them balanced when we have one element we keep it in a variable median
 // when we have two we insert the small to max pq and the large to min pq
 // when we have three we compare to decide who is the middle one to assign to median, keep the small in max pq and the largest in min pq
 // when we have the 4th we compare it with median, if smaller it goes to max pq and median goes to min pq
