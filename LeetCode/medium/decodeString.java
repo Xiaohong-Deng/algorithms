@@ -1,5 +1,6 @@
 package LeetCode.medium;
 import java.util.Deque;
+import java.util.Stack;
 import java.util.ArrayDeque;
 
 public class decodeString {    
@@ -44,6 +45,41 @@ public class decodeString {
         return ans.reverse().toString();
     }
 
+    public String decodeTwoStacks(String s) {
+        Stack<Integer> nums = new Stack<>();
+        Stack<StringBuilder> str = new Stack<>();
+        int curNum;
+
+        StringBuilder curStr, decodedStr;
+        curNum = 0;
+        curStr = new StringBuilder();
+        char c;
+
+        for (int i = 0; i < s.length(); i++) {
+            c = s.charAt(i);
+            if (Character.isDigit(c)) {
+                curNum = curNum * 10 + (c - '0');
+            } else if (c == '[') {
+                nums.add(curNum);
+                str.add(curStr);
+                curNum = 0;
+                curStr = new StringBuilder();
+            } else if (c == ']') {
+                decodedStr = str.pop();
+                curNum = nums.pop();
+                for (int j = 0; j < curNum; j++) {
+                    decodedStr.append(curStr);
+                }
+                curStr = decodedStr;
+                curNum = 0;
+            } else {
+                curStr.append(c);
+            }
+        }
+
+        return curStr.toString();
+    }
+
     public static void main(String[] args) {
         String s1 = "3[a]2[bc]";
         String s2 = "3[a2[c]]";
@@ -54,5 +90,9 @@ public class decodeString {
         System.out.println(test.decode(s1));
         System.out.println(test.decode(s2));
         System.out.println(test.decode(s3));
+
+        System.out.println(test.decodeTwoStacks(s1));
+        System.out.println(test.decodeTwoStacks(s2));
+        System.out.println(test.decodeTwoStacks(s3));
     }
 }
