@@ -1,7 +1,8 @@
 package LeetCode.medium;
 
 import java.util.List;
-import java.util.Stack;
+import java.util.Deque;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class BSTIterator {
@@ -9,7 +10,7 @@ public class BSTIterator {
     private List<Integer> orderedTree;
     private int index;
 
-    private Stack<TreeNode> stack;
+    private Deque<TreeNode> stack;
 
     public static class TreeNode {
         public int val;
@@ -30,7 +31,7 @@ public class BSTIterator {
         this.index = 0;
         orderTree(root);
 
-        stack = new Stack<>();
+        stack = new ArrayDeque<>();
 
         orderUntilLeftMost(root);
     }
@@ -44,7 +45,7 @@ public class BSTIterator {
     }
 
     public int next2() {
-        TreeNode ans = stack.pop();
+        TreeNode ans = stack.pollLast();
 
         if (ans.right != null) {
             orderUntilLeftMost(ans.right);
@@ -71,7 +72,7 @@ public class BSTIterator {
     private void orderUntilLeftMost(TreeNode node) {
         // we can use if but that causes recursion
         while (node != null) {
-            stack.push(node);
+            stack.addLast(node);
             node = node.left;
         }
     }
