@@ -1,7 +1,5 @@
 package LeetCode.medium;
 
-import javax.swing.tree.TreeCellEditor;
-
 import LeetCode.medium.BSTIterator.TreeNode;
 
 public class coinDistrBinTree {
