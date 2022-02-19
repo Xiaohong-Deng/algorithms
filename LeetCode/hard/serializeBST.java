@@ -3,6 +3,8 @@ package LeetCode.hard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import LeetCode.medium.BSTIterator.TreeNode;
 
@@ -16,7 +18,7 @@ public class serializeBST {
     public TreeNode deserialize(String data) {
         String[] strArray = data.split(",");
         List<String> strList = new ArrayList<>(Arrays.asList(strArray));
-        return deserialize(strList);
+        return deserialize(new ArrayDeque<>(strList));
     }
 
     private void serialize(TreeNode node, StringBuilder sb) {
@@ -29,15 +31,14 @@ public class serializeBST {
         }
     }
 
-    private TreeNode deserialize(List<String> strList) {
+    private TreeNode deserialize(Deque<String> strList) {
         // if null must remove it from the list because the null might be a child indicating no more DFS in this direction
-        if (strList.get(0).equals("null")) {
-            strList.remove(0);
+        String n = strList.poll();
+        if (n.equals("null")) {
             return null;
         }
 
-        TreeNode node = new TreeNode(Integer.parseInt(strList.get(0)));
-        strList.remove(0);
+        TreeNode node = new TreeNode(Integer.parseInt(n));
         node.left = deserialize(strList);
         node.right = deserialize(strList);
         return node;
