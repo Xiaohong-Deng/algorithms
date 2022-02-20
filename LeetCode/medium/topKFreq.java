@@ -87,6 +87,8 @@ public class topKFreq {
 
         while (j <= end) {
             // equal counts must be on the right of pivot
+            // but it does not matter, think if you have too many euqal counts you have to do extra search on the right of your pivot
+            // if you have too many equal counts you put them on the left you have to do extra search on the left
             if (counts[j] < counts[start]) {
                 temp = counts[i];
                 counts[i] = counts[j];

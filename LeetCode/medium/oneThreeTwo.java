@@ -20,14 +20,15 @@ public class oneThreeTwo {
                 continue;
             }
 
-            while (stack.size() != 0 && nums[i] > stack.peek()) {
-                int top = stack.pop();
+            // stack top is the element after nums[i] in nums
+            while (stack.size() != 0 && nums[i] > stack.peekLast()) {
+                int top = stack.pollLast();
                 if (top > prefixMin[i]) {
                     return true;
                 }
             }
 
-            stack.push(nums[i]);
+            stack.add(nums[i]);
         }
 
         return false;
