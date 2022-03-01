@@ -136,9 +136,9 @@ public class findWinnerTicTacToe {
     }
 
     public static void main(String[] args) {
-        int[][] moves = {{0,0}, {2,0}, {1,1}, {2,1}, {2,2}};
-        int[][] moves2 = {{0, 0}, {1, 1}, {0, 1}, {0, 2}, {1, 0}, {2, 0}};
-        int[][] moves3 = {{0,0},{1,1},{2,0},{1,0},{1,2},{2,1},{0,1},{0,2},{2,2}};
+        // int[][] moves = {{0,0}, {2,0}, {1,1}, {2,1}, {2,2}};
+        // int[][] moves2 = {{0, 0}, {1, 1}, {0, 1}, {0, 2}, {1, 0}, {2, 0}};
+        // int[][] moves3 = {{0,0},{1,1},{2,0},{1,0},{1,2},{2,1},{0,1},{0,2},{2,2}};
         int[][] moves4 = {{0,0},{1,2}, {0, 2}, {1,1}};
         findWinnerTicTacToe t = new findWinnerTicTacToe();
         System.out.println(t.tictactoe(moves4));

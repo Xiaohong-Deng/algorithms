@@ -16,6 +16,7 @@ public class removeKDigits {
 
         for (int i = 1; i < len; i++) {
             char c = num.charAt(i);
+            // if we can remove char and seq is decreasing, remove
             while (k > 0 && !s.isEmpty() && s.peekLast() > c) {
                 s.pollLast();
                 k--;                
@@ -23,6 +24,7 @@ public class removeKDigits {
             s.add(c);
         }
 
+        // if we can still remove, remove from the right
         while (k > 0) {
             s.pollLast();
             k--;

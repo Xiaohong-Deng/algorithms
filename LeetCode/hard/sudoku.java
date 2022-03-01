@@ -24,7 +24,6 @@ public class sudoku {
         int row, col;
         row = col = 0;
 
-        System.out.println(cols.get(1).contains('3'));
         fillBoardDFS(row, col, board, rows, cols, grids);
     }
 
@@ -53,6 +52,7 @@ public class sudoku {
         rowi = rows.get(row);
         coli = cols.get(col);
         gridi = grids.get(gridIdx);
+        // loop over all numbers
         for (int i = 0; i < 9; i++) {
             char c = (char) ('1' + i);
 
@@ -81,7 +81,7 @@ public class sudoku {
 
         
 
-        // if we tried every char in this cell and it is either invalud or subsequent recursive calls return false, then this call returns false
+        // if we tried every char in this cell and it is either invalid or subsequent recursive calls return false, then this call returns false
         return false;
     }
 
