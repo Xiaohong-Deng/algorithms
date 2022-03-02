@@ -5,6 +5,9 @@ import java.util.Deque;
 
 // at first i = j until k chars is encountered, we push j back by k chars, and i++, j++. At this point j points at the first char in k chars, we start copying the chars after k chars to overwrite the k char segment
 // if baaabcd, it becomes bbaabcd, compare first b and second b. Then it becomes bbcdbcd, it returns bbcd
+
+// the key is count adjacent chars and push the counts to the stack
+// we can use a StringBuilder to track the remaining chars, once top count is k, we delete the segment using sb.delete(startIdx, endIdx)
 public class removeAdjacentDupStr {
     public String removeDuplicates(String s, int k) {
         int len = s.length();
