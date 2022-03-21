@@ -49,11 +49,11 @@ public class MaxStack {
     public int popMax() {
         int maxVal = this.map.lastKey();
         List<Node> ns = this.map.get(maxVal);
-        Node maxN = ns.remove(ns.size() - 1);
+        Node maxN = ns.remove(ns.size() - 1); // remove the last occurance
         if (map.get(maxVal).isEmpty()) {
-            map.remove(maxVal);
+            map.remove(maxVal);  // if the last occurance is the only one we remove the key
         }
-        this.dll.remove(maxN);
+        this.dll.remove(maxN);  // ddl can locate the node in the middle, is it scanning?
         return maxVal;
     }
 

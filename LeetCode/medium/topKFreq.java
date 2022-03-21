@@ -16,7 +16,7 @@ public class topKFreq {
             return nums;
         }
 
-        // we can do rselect for every k, that would be O(klogn)
+        // we can do rselect for every k, that would be O(kn)
         // kth most frequent is the (n - k + 1)th least frequent, minus one to get index
         int[] keys = new int[count.size()];
         int[] counts = new int[count.size()];

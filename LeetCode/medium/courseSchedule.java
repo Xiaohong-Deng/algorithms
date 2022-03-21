@@ -3,23 +3,19 @@ package LeetCode.medium;
 import java.util.HashMap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 
-public class courseSchedule2 {
-    private int label;
-    private int[] topoOrder;
+public class courseSchedule {
     private boolean isExplored[];
     private HashMap<Integer, ArrayList<Integer>> adjList;
-    public int[] findOrder(int numCourses, int[][] prerequisites) {
-        topoOrder = new int[numCourses];
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
         isExplored = new boolean[numCourses];
         for (int i = 0; i < numCourses; i++) {
             isExplored[i] = false;
         }
-        label = numCourses - 1;
         adjList = new HashMap<>();
 
+        // directed graph, is[1] -> is[0], meaning b must be taken before a
         for (int[] is : prerequisites) {
             ArrayList<Integer> neighbors = adjList.getOrDefault(is[1], new ArrayList<>());
             neighbors.add(is[0]);
@@ -29,28 +25,24 @@ public class courseSchedule2 {
         Deque<Integer> recStack = new ArrayDeque<>();
 
         for (int i = 0; i < numCourses; i++) {
-            boolean hasCycle = dfs(i, recStack);
-            if (hasCycle) {
-                return new int[0];
+            if (hasCycle(i ,recStack)) {
+                return false;
             }
         }
 
-        return topoOrder;
+        return true;
     }
 
-    private boolean dfs(int node, Deque<Integer> recStack) {
+    private boolean hasCycle(int node, Deque<Integer> recStack) {
         if (recStack.contains(node)) {
             return true;
         }
-        // if explored do nothing, this is for outter for loop not recursive calls
+
         if (isExplored[node]) {
             return false;
         }
-        // if no neighbor, mark the node and return
+
         if (!adjList.containsKey(node)) {
-            topoOrder[label] = node;
-            label--;
-            isExplored[node] = true;
             return false;
         }
 
@@ -59,8 +51,7 @@ public class courseSchedule2 {
         // if neighbors, continue dfs, after all dfs, mark node and return
         for (int i : adjList.get(node)) {
             if (!isExplored[i]) {
-                boolean hasCycle = dfs(i, recStack);
-                if (hasCycle) {
+                if(hasCycle(i, recStack)) {
                     return true;
                 }
             }
@@ -68,23 +59,14 @@ public class courseSchedule2 {
 
         // the definition of explored is very important here we want mark it explored after we retreat from it
         // otherwise we can tell if an explored node is on the recStack
-        topoOrder[label] = node;
-        label--;
         isExplored[node] = true;
         recStack.removeLast();
         return false;
     }
 
     public static void main(String[] args) {
-        int numCourses = 4;
-        int[][] prereqs = {{1,0}, {2,0}, {3,1}, {3,2}};
-        int num = 2;
-        int[][] prereqs2 = {{1, 0}, {0, 1}};
-        int num1 = 1;
-        int[][] prereqs3 = {};
-        courseSchedule2 t = new courseSchedule2();
-        System.out.println(Arrays.toString(t.findOrder(numCourses, prereqs)));
-        System.out.println(Arrays.toString(t.findOrder(num, prereqs2)));
-        System.out.println(Arrays.toString(t.findOrder(num1, prereqs3)));
+        int[][] courses= {{1,0}, {0,1}};
+        courseSchedule t = new courseSchedule();
+        System.out.println(t.canFinish(2, courses));
     }
 }
